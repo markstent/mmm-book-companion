@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "If you use this software or the Sedge Shoes dataset generator, please cite it as below."
+title: "Marketing Mix Modelling - Companion Code"
+type: software
+authors:
+  - family-names: "Stent"
+    given-names: "Mark"
+license: MIT
+repository-code: "https://github.com/markstent/mmm-book-companion"
+abstract: "Companion code for the book Marketing Mix Modelling by Mark Stent: a small helper library (adstock, saturation, a deterministic synthetic Sedge Shoes dataset generator and a reference PyMC model), the case-study and lab notebooks, exercises and tests."
+keywords:
+  - marketing mix modelling
+  - Bayesian
+  - PyMC
+  - marketing analytics
+  - causal inference
+  - synthetic data
+version: "1.0.0"
+date-released: "2026-11-10"

@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Lint, tests and notebooks
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.12"
+          enable-cache: true
+      - name: Sync
+        run: uv sync --locked
+      - name: Lint
+        run: uv run ruff check .
+      - name: Unit tests
+        run: uv run pytest tests -v
+      - name: Notebook execution
+        run: uv run pytest --nbmake --nbmake-timeout=600 notebooks exercises -v

@@ -1,0 +1,24 @@
+{
+  "title": "Marketing Mix Modelling - Companion Code",
+  "upload_type": "software",
+  "description": "Companion code for the book Marketing Mix Modelling by Mark Stent: a small helper library (adstock, saturation, a deterministic synthetic Sedge Shoes dataset generator and a reference PyMC model), the case-study and lab notebooks, exercises and tests.",
+  "creators": [
+    { "name": "Stent, Mark" }
+  ],
+  "license": "MIT",
+  "keywords": [
+    "marketing mix modelling",
+    "Bayesian",
+    "PyMC",
+    "marketing analytics",
+    "causal inference",
+    "synthetic data"
+  ],
+  "related_identifiers": [
+    {
+      "relation": "isSupplementTo",
+      "identifier": "https://github.com/markstent/mmm-book-companion",
+      "scheme": "url"
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+[project]
+name = "mmm-book"
+version = "1.0.0"
+description = "Companion code for the book Marketing Mix Modelling by Mark Stent: PyMC labs, the Sedge Shoes case study, and exercises."
+readme = "README.md"
+authors = [
+    { name = "Mark Stent", email = "mark@markstent.co.za" }
+]
+requires-python = ">=3.12"
+license = "MIT"
+keywords = ["marketing mix modelling", "MMM", "Bayesian", "PyMC", "causal inference", "marketing analytics"]
+
+dependencies = [
+    "arviz>=1.3.0",
+    "h5netcdf>=1.8.2",
+    "h5py>=3.16.0",
+    "ipywidgets>=8.1.9",
+    "jupyterlab>=4.6.5",
+    "matplotlib>=3.11.1",
+    "numpy>=2.0",
+    "pandas>=3.0.5",
+    "pymc>=6.2.0",
+    "pymc-marketing>=1.1.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/markstent/mmm-book-companion"
+Repository = "https://github.com/markstent/mmm-book-companion"
+
+[build-system]
+requires = ["uv_build>=0.11.29,<0.12.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "nbmake>=1.5.5",
+    "pytest>=9.1.1",
+    "ruff>=0.16.6",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/test_examples.py" = ["E402"]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests"]
