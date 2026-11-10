@@ -26,7 +26,7 @@ def geometric_adstock(
       12.9, ... for ``l_max=12`` and alpha = 0.5.
 
     The two differ only by a constant factor, ``sum(alpha ** k)`` over the
-    lags, so the temporal weighting is identical. pymc-marketing's
+    lags, so the temporal weighting is identical. PyMC-Marketing's
     ``GeometricAdstock`` component (the one the ``MMM`` class uses) also
     normalises by default, although its low-level ``geometric_adstock``
     function defaults to ``normalize=False``; check the version you use.

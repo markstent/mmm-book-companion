@@ -161,7 +161,7 @@ def test_meta_holdout_numbers_follow_from_the_ledger_curve():
 
 
 def test_a_push_could_not_have_read_the_holdout_roas():
-    """The superseded design (a push from 13,000 to 43,000 a week) cannot reach 1.75x.
+    """A push design (from 13,000 to 43,000 a week) cannot reach 1.75x.
 
     On a concave curve the return on extra spend is capped by the marginal return
     at the starting point, so a push in the same eight regions reads far below

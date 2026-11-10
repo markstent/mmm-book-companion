@@ -1,10 +1,10 @@
 """Recover channel ROAS from the reference model and compare to ground truth.
 
 This recovery is approximate and qualitative by design: the national-aggregate
-reference model uses a population-level Hill half-point that does not exactly
-match the per-region data-generating process, so the recovered ROAS will not
-closely match GROUND_TRUTH. That gap is the motivation for calibrating to an
-experiment instead of trusting the observational fit alone, see ex_calibration.py.
+reference model uses a population-level Hill half-saturation point that does
+not exactly match the per-region data-generating process, so the recovered
+ROAS will not closely match GROUND_TRUTH. That gap is why ex_calibration.py
+calibrates to an experiment instead of trusting the observational fit alone.
 """
 
 import pymc as pm

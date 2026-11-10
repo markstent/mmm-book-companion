@@ -1,12 +1,12 @@
 """Shared national-aggregate reference MMM used across the PyMC labs.
 
-Lab 15 builds this model inline, in stages, as the teaching origin: a
+Lab 15 builds this model inline and in stages, from scratch: a
 national weekly aggregate of Sedge Shoes, correctly-specified adstock and
 saturation features (using the same transform hyperparameters the Sedge
 generator used to build the data), and a linear-in-betas revenue model
 with Chapter 15's baseline, non-media treatment and control terms. Later
 labs reuse the same construction rather than re-deriving it, so this
-module factors it out into small, composable pieces:
+module splits it into small pieces that can be combined:
 
 ``national_aggregate`` collapses the region-week panel to one row per week.
 ``build_seasonality``, ``build_events``, ``build_treatments`` and

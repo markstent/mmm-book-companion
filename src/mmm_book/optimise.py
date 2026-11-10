@@ -21,7 +21,7 @@ Meta, 2.0x YouTube, 1.5x OOH), so Chapters 27 and 28 can do their
 arithmetic on one known set of curves.
 
 ``greedy_allocate`` is the dependency-light greedy marginal allocator of
-lab 27, extended with per-channel lower and upper bounds.
+Lab 27, extended with per-channel lower and upper bounds.
 """
 
 from __future__ import annotations

@@ -61,7 +61,7 @@ where ``implied_lift`` is the revenue the fitted Meta curve says the pause
 cost: Meta switched off in the treatment regions for the six test weeks,
 pushed through the model's own adstock and saturation, and summed over the
 test weeks plus the cooldown.
-The national lab version (lab 24, ``examples/ex_calibration.py``) uses a
+The national lab version (Lab 24, ``examples/ex_calibration.py``) uses a
 simpler stand-in, ``implied_meta_roas`` times
 ``EXPERIMENT_WITHHELD_SPEND_GBP``; it is an approximation because the ledger
 curve's holdout return (1.55) sits a little below the annual average (1.75).
@@ -196,7 +196,7 @@ def ledger_holdout_design(seed: int | None = None) -> dict:
 
 
 def ledger_push_design(weekly_total_gbp: float = 43_000.0, seed: int | None = None) -> dict:
-    """What the superseded design would have read on the ledger curve.
+    """What a push design would have read on the ledger curve.
 
     Raises Meta in the same regions to ``weekly_total_gbp`` a week in total
     (13,000 to 43,000 by default) and returns the extra spend, the extra

@@ -6,10 +6,11 @@ than to a national aggregate:
 * a level for each of the 18 regions, estimated separately as a log-scale
   departure from the region's own average sales (no pooling: every region
   has 156 weeks of sales to pin its own level);
-* a log-linear baseline with a trend, two annual Fourier pairs and the
-  agreed control set (price, promotion depth, distribution, stock,
-  temperature, rainfall and the category search index), plus one uplift
-  per product launch, each with its own independent Normal(0.05, 0.1) prior;
+* a log-linear baseline with a trend, two annual Fourier pairs and one
+  uplift per product launch, each launch with its own independent
+  Normal(0.05, 0.1) prior, and the agreed control set (price, promotion
+  depth, distribution, stock, temperature, rainfall and the category
+  search index) on the same log scale;
 * geometric adstock and Hill saturation for each channel, with the adstock
   retention and the half-saturation point *estimated*, and regional media
   effects partially pooled around the national effect;
@@ -75,7 +76,7 @@ TREATMENT_COL = {
     },
 }
 
-# Controls enter the log baseline; the multiplicative ones as logs.
+# Controls enter on the log scale beside the baseline; the multiplicative ones as logs.
 CONTROLS = {
     "price": lambda d: np.log(d["price"]),
     "promo_depth": lambda d: d["promo_depth"],

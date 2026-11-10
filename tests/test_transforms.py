@@ -20,7 +20,7 @@ def test_adstock_carryover_decays():
 def test_adstock_normalize_sums_weights_to_one():
     x = np.ones(10)
     out = geometric_adstock(x, alpha=0.5, l_max=6, normalize=True)
-    # steady-state normalized adstock of constant ones tends to 1
+    # steady-state normalised adstock of constant ones tends to 1
     assert abs(out[-1] - 1.0) < 1e-6
 
 

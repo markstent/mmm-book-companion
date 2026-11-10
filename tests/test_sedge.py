@@ -25,7 +25,7 @@ def test_seed_stability():
 
 
 def test_revenue_scale_is_book_like():
-    # book Sedge Shoes closes near 48 million pounds per year across regions
+    # the book's Sedge Shoes takes about 48 million pounds a year across all regions
     df = generate_sedge(n_weeks=52)
     annual = df["revenue"].sum()
     assert 30e6 < annual < 70e6

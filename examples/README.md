@@ -1,14 +1,13 @@
 # Examples
 
-These short, self-contained scripts show the modelling pattern behind each code-heavy chapter.
-The book itself prints no code listings; these files are the runnable counterpart, and CI runs every one of them, so none can drift out of date.
+These short scripts show the modelling pattern behind each code-heavy chapter.
+The book itself prints no code listings, so these files are its runnable counterpart.
 
-Every script is self-contained, imports from the installed `mmm_book` package, runs to completion in a few seconds, and prints a short result.
-`tests/test_examples.py` runs every `examples/ex_*.py` script as a subprocess and asserts it exits with status 0.
-This means a script cannot drift from what is printed here: if it breaks, CI breaks.
+Every script is self-contained, imports from the installed `mmm_book` package, runs to completion in a few seconds and prints a short result.
+`tests/test_examples.py` runs every `examples/ex_*.py` script as a subprocess and asserts that it exits with status 0, so a script cannot drift out of date without CI failing.
 
 Any script that samples with PyMC uses a small, fast configuration (`draws=200, tune=200, chains=2, cores=1, target_accept=0.9`) with the shared `RANDOM_SEED`, so the run is deterministic and quick.
-This is not meant to produce publication-quality posteriors, only to demonstrate the modelling pattern the book chapter describes.
+That is enough to show the modelling pattern the chapter describes, though not to produce publication-quality posteriors.
 
 ## Scripts
 
@@ -19,8 +18,8 @@ This is not meant to produce publication-quality posteriors, only to demonstrate
 - `ex_fit.py` - fit the reference model and print `az.summary` of the channel betas.
 - `ex_hierarchical.py` - a minimal partial-pooling model with per-region betas pooled to a channel mean.
 - `ex_ppc.py` - fit the reference model and run a posterior predictive check against observed revenue.
-- `ex_synthetic_recovery.py` - recover each channel's ROAS from a fit and compare it to the known ground truth. The recovery is approximate by design (aggregation/identifiability gap between the national model and the per-region generator), which sets up the calibration example below.
-- `ex_calibration.py` - add an experiment likelihood term for the Meta channel (the book's Chapter 36 geo holdout) and refit.
+- `ex_synthetic_recovery.py` - recover each channel's ROAS from a fit and compare it to the known ground truth. The recovery is approximate by design, because the national model is fitted to data generated region by region, and that gap sets up the calibration example below.
+- `ex_calibration.py` - add an experiment likelihood term for the Meta channel (a simple stand-in for the book's Chapter 36 geo holdout) and refit.
 - `ex_response_curve.py` - build a response curve for one channel from a point beta and read off average and marginal return.
 - `ex_budget_optimisation.py` - greedy numpy-only budget reallocation across channels (no scipy).
 
@@ -39,5 +38,5 @@ uv run pytest tests/test_examples.py -v
 ## Keeping these runnable
 
 If you change an interface in `src/mmm_book`, update the examples that use it in the same change.
-Keep each script under about 30 lines so it still reads well as a book listing.
+Keep each script short so it can be read at a glance.
 `tests/test_examples.py` will fail if any script stops running, so a broken example cannot merge.

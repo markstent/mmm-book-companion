@@ -19,11 +19,13 @@ with the same columns, the same awkward correlations and the same traps:
   was updated three months late (``RETAILER_ONBOARDING``), the data problem
   Chapter 35's baseline model finds. ``correct_distribution`` repairs it.
 
-Revenue in each region-week is an organic baseline (trend, seasonality,
-distribution, stock, price, promotion depth, weather, launches and the
-demand shock, all multiplicative) plus a contribution from each marketing
-channel. Each channel's driver (GRPs for television, generic search
-impressions for Paid Search, spend for the rest) is adstocked with
+Revenue in each region-week is an organic baseline (level, trend,
+seasonality and launches) scaled by price and promotion depth (non-media
+treatments), the controls (distribution, stock, weather) and the demand
+shock, all multiplicative,
+plus a contribution from each marketing channel. Each channel's driver
+(GRPs for television, generic search impressions for Paid Search, spend
+for the rest) is adstocked with
 ``geometric_adstock`` and saturated with ``hill_saturation``, then scaled
 so that the channel's aggregate ROAS matches ``GROUND_TRUTH`` *by
 construction*:
@@ -53,9 +55,10 @@ from mmm_book.saturation import hill_saturation
 
 CHANNELS = ["tv", "search", "meta", "youtube", "ooh"]
 
-# True average ROAS per channel. These are the book's canonical Sedge
-# ledger (Chapter 36, final calibrated estimates): Television 2.4x, Paid
-# Search 2.7x, Meta 1.75x, YouTube 2.0x, OOH 1.5x. A test
+# True average ROAS per channel, the book's canonical Sedge ledger:
+# Television 2.4x, Paid Search 2.7x, Meta 1.75x, YouTube 2.0x, OOH 1.5x.
+# The chapters before Part IX use them as Sedge's working numbers, and
+# Chapter 36 checks the calibrated model against them. A test
 # (tests/test_book_ledger.py) ties these values to the book.
 GROUND_TRUTH = {"tv": 2.4, "search": 2.7, "meta": 1.75, "youtube": 2.0, "ooh": 1.5}
 

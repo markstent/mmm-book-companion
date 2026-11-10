@@ -11,7 +11,7 @@ CHANNEL = "search"
 nat = national_aggregate(generate_sedge())
 # In a real analysis the betas come from a fitted model, e.g.
 # idata.posterior["beta_search"].mean(). Here we use the betas that reproduce
-# the book's average ROAS ledger, so the curve is the one Chapter 37 draws.
+# the book's average ROAS ledger, so the curve is the teaching curve Chapters 27 and 28 use.
 curves = ResponseCurves(nat, ledger_betas(nat))
 
 now = curves.current_native[CHANNEL]
