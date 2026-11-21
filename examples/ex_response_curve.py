@@ -1,17 +1,21 @@
 """Build a response curve for one channel from a point beta."""
 
+# [book:response_curve_imports-start]
 import numpy as np
 
 from mmm_book.optimise import ResponseCurves, ledger_betas, to_money
 from mmm_book.reference import national_aggregate
 from mmm_book.sedge import generate_sedge
 
+# [book:response_curve_imports-end]
+
+# [book:response_curve-start]
 CHANNEL = "search"
 
 nat = national_aggregate(generate_sedge())
-# In a real analysis the betas come from a fitted model, e.g.
-# idata.posterior["beta_search"].mean(). Here we use the betas that reproduce
-# the book's average ROAS ledger, so the curve is the teaching curve Chapters 27 and 28 use.
+# A fitted model supplies the betas in a real analysis, e.g.
+# idata.posterior["beta_search"].mean(). Here they reproduce
+# the book's average ROAS, giving Chapter 23's teaching curve.
 curves = ResponseCurves(nat, ledger_betas(nat))
 
 now = curves.current_native[CHANNEL]
@@ -21,3 +25,4 @@ for level in np.linspace(0, now * 2, 5):
 
 print(f"average return at current spend:  {curves.average_return(CHANNEL):.2f}")
 print(f"marginal return at current spend: {curves.marginal_return(CHANNEL):.2f}")
+# [book:response_curve-end]

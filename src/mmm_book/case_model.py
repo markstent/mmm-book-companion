@@ -1,4 +1,4 @@
-"""The Sedge Shoes case-study model of Chapters 35 to 39.
+"""The Sedge Shoes case-study model of Chapters 31 to 34.
 
 This is the model the book describes, fitted to the regional panel rather
 than to a national aggregate:
@@ -20,7 +20,7 @@ than to a national aggregate:
   strong return but excludes platform-attribution values, and a broad
   positive prior on OOH.
 
-Two treatment sets exist. ``"model1"`` is Chapter 35's first model, with
+Two treatment sets exist. ``"model1"`` is Chapter 31's first model, with
 total Paid Search spend as the Search treatment. ``"model2"`` is the
 revised model: generic Search impressions replace total Search spend and
 brand search leaves the media set. Paid Search's ROAS is quoted on total
@@ -35,6 +35,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -111,7 +112,7 @@ class CasePriors:
         )
 
 
-# Chapter 35, "Prior design", before the prior predictive check.
+# Chapter 31, "Prior design", before the prior predictive check.
 FIRST_PRIORS = CasePriors(
     roas={
         "tv": (2.2, 0.35),  # two geo tests at 2.0x and 2.4x; widened
@@ -216,7 +217,7 @@ def prepare_case_data(
     Controls and the trend index are standardised with the mean and standard
     deviation of the weeks the model learns from. With ``train_weeks`` set
     those are the first ``train_weeks`` weeks only, so the scaling carries no
-    information from the held-out weeks into training (Chapter 21).
+    information from the held-out weeks into training (Chapter 20).
     """
     if variant not in TREATMENT_COL:
         raise ValueError(f"variant must be one of {sorted(TREATMENT_COL)}")
@@ -281,7 +282,7 @@ def _adstock_hill(lags, alpha, k, ref):
 
 
 def holdout_window(df: pd.DataFrame | None = None) -> dict:
-    """Treatment regions and weeks of the Chapter 36 Meta holdout."""
+    """Treatment regions and weeks of the Chapter 32 Meta holdout."""
     from mmm_book.experiment import (
         EXPERIMENT_COOLDOWN_WEEKS,
         EXPERIMENT_START_WEEK,
@@ -306,7 +307,7 @@ def build_case_model(
 ) -> pm.Model:
     """Build (but do not sample) the Sedge case-study model.
 
-    With ``calibrate=True`` the Chapter 36 Meta holdout enters as one more
+    With ``calibrate=True`` the Chapter 32 Meta holdout enters as one more
     observation: the model pushes the pause (Meta switched off in the
     treatment regions for six weeks) through its own adstock and saturation
     curve, sums the revenue it implies was lost over the six weeks plus the
@@ -317,7 +318,7 @@ def build_case_model(
     the likelihood, and everything computed from the data (the scaling of
     controls and trend, each region's reference activity for the
     half-saturation point, and the spend that defines ROAS) uses them alone,
-    so the remaining weeks are a true test period (Chapter 36's validation
+    so the remaining weeks are a true test period (Chapter 32's validation
     trains on 130 weeks and predicts the last 26).
     """
     R, T = data.y.shape
@@ -347,7 +348,7 @@ def build_case_model(
         # Launches: each its own uplift, with a wide prior centred on a 5 per
         # cent lift. Only three launches exist, too few to learn a shared
         # spread, so a launch the data have not seen keeps a wide range
-        # around that centre (Chapter 36).
+        # around that centre (Chapter 32).
         launch_effect = pm.Normal("launch_effect", 0.05, 0.1, dims="launch")
         log_mult = (
             trend * data.trend[None, :]
@@ -357,6 +358,7 @@ def build_case_model(
         )
         baseline = level[:, None] * pt.exp(log_mult)
 
+        # [book:case_model-start]
         # media: priors on ROAS, adstock and saturation estimated
         contribution = []
         for ch in CHANNELS:
@@ -392,10 +394,10 @@ def build_case_model(
         if store_mu:
             mu = pm.Deterministic("mu", mu, dims=("region", "week"))
         sigma = pm.HalfNormal("sigma", 0.1)
-        # Noise in proportion to each region's size (its average sales), so a
-        # large region is not held to a small region's error in pounds.
+        # Noise scales with each region's size (its average sales).
         size = np.exp(log_y_region)[:, None]
         pm.Normal("y", mu=mu[:, :n], sigma=sigma * size, observed=data.y[:, :n])
+        # [book:case_model-end]
     return model
 
 
@@ -485,6 +487,10 @@ def fit_case_model(
             tune=tune,
             chains=chains,
             cores=min(chains, 4),
+            # PyMC forks its chain workers on Apple-silicon Macs, and a forked
+            # worker running this model's compiled code can segfault there.
+            # forkserver starts each worker cleanly; Linux keeps PyMC's default.
+            mp_ctx="forkserver" if sys.platform == "darwin" else None,
             target_accept=target_accept,
             random_seed=random_seed,
             init="adapt_diag",
@@ -568,7 +574,7 @@ def marginal_roas_draws(
 
 
 def holdout_lift_draws(idata, data: CaseData) -> np.ndarray:
-    """Revenue the Chapter 36 Meta pause costs, per posterior draw, in pounds.
+    """Revenue the Chapter 32 Meta pause costs, per posterior draw, in pounds.
 
     The same calculation as the calibration term: Meta switched off in the
     treatment regions for the six test weeks, pushed through each draw's

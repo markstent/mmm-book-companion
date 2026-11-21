@@ -1,12 +1,12 @@
-"""The optimiser numbers printed in the teaching chapters 27 and 28.
+"""The optimiser numbers printed in the teaching chapters 24 and 25.
 
 Each test reruns the companion allocator on the ledger curves (the curves a
 model would have if it had recovered the true values built into the data
 exactly) and checks it lands on the figure the book prints, so the text and
 the code cannot drift apart.
 
-The Chapter 38 tests below run the same calculations on these teaching
-curves as a cross-check of the allocator and the plan bounds. Chapter 38
+The Chapter 33 tests below run the same calculations on these teaching
+curves as a cross-check of the allocator and the plan bounds. Chapter 33
 itself prints the fitted model's versions, which ``test_book_part9.py`` pins.
 """
 
@@ -44,7 +44,7 @@ def revenue_m(curves, alloc, cpm_rise: float = 0.0) -> float:
     )
 
 
-def chapter27_bounds(curves):
+def chapter24_bounds(curves):
     """Plus or minus 20 per cent for mature channels, 30 per cent for YouTube and TV."""
     lo, hi = band(curves, 0.20)
     for ch in ("youtube", "tv"):
@@ -63,9 +63,9 @@ def test_current_mix_delivers_the_books_12_72m(curves):
     assert revenue_m(curves, curves.current_money) == pytest.approx(12.72, abs=0.01)
 
 
-def test_chapter27_unconstrained_plan(curves):
+def test_chapter24_unconstrained_plan(curves):
     alloc = greedy_allocate(curves)
-    # Chapter 27's plans table prints the allocation to two decimals
+    # Chapter 24's plans table prints the allocation to two decimals
     book = {"tv": 3.00, "search": 1.19, "meta": 0.68, "youtube": 1.13, "ooh": 0.00}
     for ch in CHANNELS:
         assert round(annual_m(alloc[ch]), 2) == book[ch], ch
@@ -74,8 +74,8 @@ def test_chapter27_unconstrained_plan(curves):
     assert 0.5 * gain == pytest.approx(0.44, abs=0.005)
 
 
-def test_chapter27_constrained_plan(curves):
-    lo, hi = chapter27_bounds(curves)
+def test_chapter24_constrained_plan(curves):
+    lo, hi = chapter24_bounds(curves)
     alloc = greedy_allocate(curves, lo, hi)
     book = {"tv": 1.82, "search": 1.22, "meta": 1.20, "youtube": 1.04, "ooh": 0.72}
     for ch in CHANNELS:
@@ -95,7 +95,7 @@ def test_chapter28_cut_and_recession(curves):
     assert dearer_media == pytest.approx(0.7, abs=0.05)
 
 
-def test_chapter38_portfolio_scenarios(curves):
+def test_chapter33_portfolio_scenarios(curves):
     plan = book_plan_weekly(curves)
     at_plan = revenue_m(curves, plan)
     assert at_plan == pytest.approx(13.0, abs=0.05)
@@ -108,7 +108,7 @@ def test_chapter38_portfolio_scenarios(curves):
     assert at_plan - revenue_m(curves, targeted_cut(curves, 5.1)) == pytest.approx(1.2, abs=0.05)
 
 
-def test_chapter38_naive_and_constrained_optimisers(curves):
+def test_chapter33_naive_and_constrained_optimisers(curves):
     current = revenue_m(curves, curves.current_money)
     lo40, hi40 = band(curves, 0.40)
     naive = greedy_allocate(curves, lo40, hi40)
@@ -124,8 +124,8 @@ def test_chapter38_naive_and_constrained_optimisers(curves):
     assert gain - plan_gain == pytest.approx(0.02, abs=0.01)
 
 
-def test_chapter27_table_scores_the_chapter38_naive_plan(curves):
-    """Chapter 27's table prints Chapter 38's naive plan, rescored on these curves."""
+def test_chapter24_table_scores_the_chapter33_naive_plan(curves):
+    """Chapter 24's table prints Chapter 33's naive plan, rescored on these curves."""
     plan_m = {"search": 1.29, "meta": 0.90, "youtube": 1.12, "tv": 1.96, "ooh": 0.73}
     scale = curves.total_budget * WEEKS / 6_000_000.0
     alloc = {ch: plan_m[ch] * 1e6 / WEEKS * scale for ch in CHANNELS}

@@ -1,7 +1,7 @@
 """Synthetic "Sedge Shoes" dataset generator for the MMM book case study.
 
 Sedge is a made-up UK running-shoe retailer selling across 18 regions.
-The generator builds the weekly region panel that Chapter 34 describes,
+The generator builds the weekly region panel that Chapter 31 describes,
 with the same columns, the same awkward correlations and the same traps:
 
 * Television is bought in flights around the spring races and Christmas,
@@ -17,7 +17,7 @@ with the same columns, the same awkward correlations and the same traps:
   competitor activity in the data.
 * In one region a new retail partner went live but the distribution series
   was updated three months late (``RETAILER_ONBOARDING``), the data problem
-  Chapter 35's baseline model finds. ``correct_distribution`` repairs it.
+  Chapter 31's baseline model finds. ``correct_distribution`` repairs it.
 
 Revenue in each region-week is an organic baseline (level, trend,
 seasonality and launches) scaled by price and promotion depth (non-media
@@ -34,7 +34,7 @@ construction*:
 
 holds exactly for the generated dataset. Brand search spend has no causal
 effect of its own: its revenue is demand it collects, which is why
-Chapter 35 takes it out of the media set. Paid Search's ROAS is still
+Chapter 31 takes it out of the media set. Paid Search's ROAS is still
 quoted on total Search spend, brand included, as the book does.
 
 ``ground_truth_contributions`` returns the by-construction per-channel
@@ -58,11 +58,11 @@ CHANNELS = ["tv", "search", "meta", "youtube", "ooh"]
 # True average ROAS per channel, the book's canonical Sedge ledger:
 # Television 2.4x, Paid Search 2.7x, Meta 1.75x, YouTube 2.0x, OOH 1.5x.
 # The chapters before Part IX use them as Sedge's working numbers, and
-# Chapter 36 checks the calibrated model against them. A test
+# Chapter 32 checks the calibrated model against them. A test
 # (tests/test_book_ledger.py) ties these values to the book.
 GROUND_TRUTH = {"tv": 2.4, "search": 2.7, "meta": 1.75, "youtube": 2.0, "ooh": 1.5}
 
-# Annual media spend per channel in the book (GBP), Chapter 34. Total GBP 6.0m.
+# Annual media spend per channel in the book (GBP), Chapter 31. Total GBP 6.0m.
 # Each channel's plan is scaled so the panel spends exactly this a year.
 BOOK_ANNUAL_SPEND = {
     "tv": 1_400_000.0,
@@ -98,23 +98,23 @@ _RACE_WEEKS = range(10, 17)  # mid-March to late April: the spring marathons
 _XMAS_WEEKS = range(44, 51)  # November to mid-December: Black Friday and Christmas
 # Three product launches, six weeks each: two smaller ones (March 2023 and
 # March 2024) and a materially larger one in week 141 (September 2024), the
-# launch Chapter 36's holdout misses. Uplift is the share of baseline revenue.
+# launch Chapter 32's holdout misses. Uplift is the share of baseline revenue.
 LAUNCHES = [(62, 0.08), (114, 0.08), (141, 0.25)]
 LAUNCH_LENGTH = 6
 
-# The distribution data problem of Chapter 35: a new retail partner goes
+# The distribution data problem of Chapter 31: a new retail partner goes
 # live in one region in ``week`` but the distribution series records it
 # ``lag_weeks`` late. The region also gets an OOH push for the opening.
 RETAILER_ONBOARDING = {"region": "region_11", "week": 70, "lag_weeks": 12, "step": 0.10}
 _RETAILER_OOH_WEEKS = 16
 
-# Chapter 35's past search-pause test, which is in the data: generic search
+# Chapter 31's past search-pause test, which is in the data: generic search
 # off in six regions for eight weeks in summer 2022, brand search left on.
 SEARCH_PAUSE = {"regions": [3, 5, 8, 12, 14, 16], "weeks": range(30, 38)}
 _RETAILER_OOH_MULT = 2.5
 
 # Weeks in which the paid-social plan is held steady: the four weeks
-# before the Chapter 36 Meta holdout (weeks 148 to 153) and the test and
+# before the Chapter 32 Meta holdout (weeks 148 to 153) and the test and
 # cooldown themselves.
 _STEADY_SOCIAL_WEEKS = range(144, 156)
 
@@ -302,7 +302,7 @@ def _build(n_weeks: int, n_regions: int, seed: int) -> tuple[np.random.Generator
     tv = size[:, None] * tv_flight[None, :] * rng.lognormal(0.0, 0.30, (R, T))
 
     social_plan = np.exp(_ar1(rng, (T,), 0.30))
-    # The paid-social plan is held at its usual level around the Chapter 36
+    # The paid-social plan is held at its usual level around the Chapter 32
     # Meta holdout, so the test starts from business-as-usual spend.
     steady = [w for w in _STEADY_SOCIAL_WEEKS if w < T]
     if steady:
@@ -478,7 +478,7 @@ def true_marginal_roas(
 
 
 def correct_distribution(df: pd.DataFrame) -> pd.DataFrame:
-    """Repair the late distribution update described in Chapter 35.
+    """Repair the late distribution update described in Chapter 31.
 
     The commercial team's onboarding date for the new retail partner
     (``RETAILER_ONBOARDING``) says the step in distribution happened
@@ -499,7 +499,7 @@ def generate_sedge(
 ) -> pd.DataFrame:
     """Generate the synthetic Sedge weekly panel, as recorded.
 
-    One row per region-week, with the columns Chapter 34 lists: Television
+    One row per region-week, with the columns Chapter 31 lists: Television
     GRPs and spend; Paid Search spend and impressions, split into brand
     spend and generic impressions; Meta spend and impressions; YouTube
     spend, reach and frequency; OOH spend and impressions; average selling

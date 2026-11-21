@@ -48,7 +48,7 @@ AVERAGED_COLUMNS = [
 
 # The column each channel's feature is built from. Paid Search uses generic
 # impressions: brand search spend follows demand rather than creating it
-# (Chapter 35), so a feature built on total Search spend would credit Search
+# (Chapter 31), so a feature built on total Search spend would credit Search
 # with demand it only collects. Search's ROAS is still quoted on total
 # Search spend.
 DRIVER_COL = {
@@ -114,7 +114,7 @@ def build_controls(nat: pd.DataFrame) -> dict[str, np.ndarray]:
     """Controls ``Z_c`` for the reference model, each standardised.
 
     Log price, distribution, stock availability, temperature, rainfall and
-    the log category search index: the control set Chapter 34 lists for
+    the log category search index: the control set Chapter 31 lists for
     Sedge. Without them the media betas absorb price swings, weather and
     category demand. Seasonality and launches belong to the baseline
     (``build_seasonality``, ``build_events``) and promotion is a non-media
@@ -189,8 +189,8 @@ def reference_model(
 
     This is the labs' teaching model: national rather than regional, no
     hierarchy, and the adstock and Hill hyperparameters fixed at their true
-    values rather than estimated. The case-study model of Chapters 35 to
-    39, which is regional, estimates the transforms and puts priors on
+    values rather than estimated. The case-study model of Chapters 31 to
+    34, which is regional, estimates the transforms and puts priors on
     ROAS, is ``mmm_book.case_model``.
 
     ``include_media=False`` builds the first stage of Chapter 15's staged
@@ -202,6 +202,7 @@ def reference_model(
     known in advance, like a media plan, and carry no revenue information.
     Returns the built model without sampling it.
     """
+    # [book:reference_setup-start]
     n_weeks = len(nat)
     n_fit = n_weeks if n_train is None else int(n_train)
     if not 0 < n_fit <= n_weeks:
@@ -218,7 +219,9 @@ def reference_model(
     scale = float(y_fit.std())
     week = nat["week"].to_numpy(dtype=float)
     week_c = (week - week.mean()) / week.std()
+    # [book:reference_setup-end]
 
+    # [book:reference_model-start]
     with pm.Model() as model:
         intercept = pm.Normal("intercept", mu=y_fit.mean(), sigma=scale)
         trend = pm.Normal("trend", 0, scale)
@@ -244,5 +247,6 @@ def reference_model(
         if n_train is not None:
             mu = pm.Deterministic("mu", mu)
         pm.Normal("y", mu=mu[:n_fit], sigma=sigma, observed=y_fit)
+    # [book:reference_model-end]
 
     return model

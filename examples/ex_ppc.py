@@ -1,5 +1,6 @@
 """Posterior predictive check: sample, then compare to observed revenue."""
 
+# [book:ppc_imports-start]
 import numpy as np
 import pymc as pm
 
@@ -7,6 +8,9 @@ from mmm_book import RANDOM_SEED
 from mmm_book.reference import national_aggregate, reference_model
 from mmm_book.sedge import generate_sedge
 
+# [book:ppc_imports-end]
+
+# [book:ppc-start]
 df = generate_sedge(n_weeks=52, n_regions=2)
 nat = national_aggregate(df)
 model = reference_model(nat)
@@ -24,3 +28,4 @@ rmse = float(np.sqrt(np.mean((y_obs - pp_mean) ** 2)))
 print(f"observed mean revenue: {y_obs.mean():.3f}")
 print(f"posterior predictive mean: {pp_mean.mean():.3f}")
 print(f"posterior predictive RMSE: {rmse:.3f}")
+# [book:ppc-end]

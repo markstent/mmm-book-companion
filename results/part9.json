@@ -1,5 +1,5 @@
 {
- "ch27": {
+ "teaching_optimisation": {
   "bounds_m": {
    "meta": [
     1.2,
@@ -156,7 +156,7 @@
    ]
   }
  },
- "ch34": {
+ "brief": {
   "annual_revenue_m": 47.949320604180656,
   "corr_meta_youtube_national": 0.8455948256433247,
   "corr_meta_youtube_panel": 0.7620917543429223,
@@ -165,7 +165,7 @@
   "rows": 2808,
   "weeks": 156
  },
- "ch35": {
+ "first_model": {
   "meta_m": {
    "hi": 3.435349703023716,
    "lo": 1.3523724872249787,
@@ -6693,7 +6693,7 @@
    "mean": 1.8704422268665246
   }
  },
- "ch36": {
+ "validation": {
   "decomposition_m": {
    "actual": {
     "hi": 47.94932060418064,
@@ -7459,7 +7459,7 @@
    "train_weeks": 130
   }
  },
- "ch37": {
+ "marginal": {
   "meta": {
    "average": {
     "hi": 2.3568301820828474,
@@ -7541,7 +7541,7 @@
    "true_marginal": 1.8003184031386843
   }
  },
- "ch38": {
+ "optimisation": {
   "current_revenue_m": {
    "hi": 13.777665804327704,
    "lo": 11.222496486544888,
@@ -9063,7 +9063,7 @@
     },
     "profit_m": 0.13868999001510393
    },
-   "ch27_constrained": {
+   "teaching_constrained": {
     "gain_m": {
      "hi": 0.8099101842206317,
      "lo": 0.11899550974576295,
@@ -9079,7 +9079,7 @@
     },
     "profit_m": 0.22424190524216572
    },
-   "ch27_unconstrained": {
+   "teaching_unconstrained": {
     "gain_m": {
      "hi": 1.689271095661605,
      "lo": -0.05288780682329887,
@@ -9183,7 +9183,7 @@
    "mean": 1.8552568623522847
   }
  },
- "ch39": {
+ "recommendation": {
   "half_year_gain_m": 0.13309499188371707,
   "half_year_profit_m": 0.06654749594185853,
   "voi": {

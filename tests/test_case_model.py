@@ -52,7 +52,7 @@ def test_priors_follow_chapter_35():
 def test_first_ooh_prior_allows_fantastical_contributions():
     from scipy import stats
 
-    # Chapter 35: above 20m a year on 0.9m of spend in a non-trivial share of draws
+    # Chapter 31: above 20m a year on 0.9m of spend in a non-trivial share of draws
     median, sd = FIRST_PRIORS.roas["ooh"]
     p_first = stats.lognorm(sd, scale=median).sf(20e6 / 0.9e6)
     median, sd = PRIORS.roas["ooh"]
@@ -96,7 +96,7 @@ def test_train_weeks_limits_the_likelihood(small):
 
 
 def test_training_window_uses_no_test_week_information(small):
-    """Chapter 21: scaling and reference levels come from the training weeks alone."""
+    """Chapter 20: scaling and reference levels come from the training weeks alone."""
     data = prepare_case_data(small, "model2", train_weeks=52)
     changed = small.copy()
     late = changed["week"] >= 52

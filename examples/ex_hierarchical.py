@@ -1,5 +1,6 @@
 """Minimal partial pooling: region betas are a channel effect times exp(tau * z) (Lab 19)."""
 
+# [book:hierarchical_imports-start]
 import numpy as np
 import pymc as pm
 
@@ -13,6 +14,9 @@ frames = {r: df[df["region"] == r].sort_values("week") for r in regions}
 feat = np.stack([np.stack([build_features(frames[r])[ch] for ch in CHANNELS]) for r in regions])
 y = np.stack([frames[r]["revenue"].to_numpy(dtype=float) / REVENUE_SCALE for r in regions])
 
+# [book:hierarchical_imports-end]
+
+# [book:hierarchical-start]
 with pm.Model(coords={"region": regions, "channel": CHANNELS}) as model:
     level = pm.Normal("level", mu=y.mean(axis=1), sigma=y.std(), dims="region")
     mu_ch = pm.HalfNormal("mu_ch", sigma=0.1 * y.mean(), dims="channel")
@@ -29,3 +33,4 @@ with pm.Model(coords={"region": regions, "channel": CHANNELS}) as model:
     )
 
 print(idata.posterior["mu_ch"].mean(dim=("chain", "draw")).to_pandas())
+# [book:hierarchical-end]

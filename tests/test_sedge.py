@@ -94,7 +94,7 @@ def test_chapter_34_correlations():
         search=("search_spend", "sum"),
         category=("category_search", "mean"),
     )
-    # Meta and YouTube: 0.85 nationally and 0.76 across the panel (Chapter 34)
+    # Meta and YouTube: 0.85 nationally and 0.76 across the panel (Chapter 31)
     assert round(np.corrcoef(nat["meta"], nat["youtube"])[0, 1], 2) == 0.85
     assert round(np.corrcoef(df["meta_spend"], df["youtube_spend"])[0, 1], 2) == 0.76
     # Paid Search and the category search index: 0.72
@@ -121,7 +121,7 @@ def test_distribution_lag_and_correction():
     lag = df["week"].between(ret["week"], ret["week"] + ret["lag_weeks"] - 1)
     changed = (fixed["distribution"] - df["distribution"]).abs() > 1e-12
     assert (changed == (region & lag)).all()
-    assert ret["lag_weeks"] == 12  # Chapter 35: twelve weeks of positive residuals
+    assert ret["lag_weeks"] == 12  # Chapter 31: twelve weeks of positive residuals
 
 
 def test_search_pause_is_in_the_data():

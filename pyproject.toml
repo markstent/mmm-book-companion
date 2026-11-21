@@ -1,6 +1,6 @@
 [project]
 name = "mmm-book"
-version = "1.0.0"
+version = "1.1.0"
 description = "Companion code for the book Marketing Mix Modelling by Mark Stent: PyMC labs, the Sedge Shoes case study, and exercises."
 readme = "README.md"
 authors = [

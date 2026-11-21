@@ -1,4 +1,4 @@
-"""The Chapter 36 Meta geo holdout, as numbers a model can be calibrated to.
+"""The Chapter 32 Meta geo holdout, as numbers a model can be calibrated to.
 
 Sedge Shoes pauses Meta for six weeks in eight treatment regions
 (out of 18), each matched with a business-as-usual control region.
@@ -9,7 +9,7 @@ What an experiment measures depends on its design:
   marginal quantity near the starting spend level.
   On a concave response curve it cannot exceed the marginal return at the
   start, which for Meta is 0.9x at current spend on the true curve (the
-  fitted model of Chapter 37 puts it near 1.1x).
+  fitted model of Chapter 33 puts it near 1.1x).
 * A holdout (spend switched off) measures the return on the spend that was
   switched off, which is an average-type quantity for that slice of spend.
   On the true curve it sits between the marginal return (0.9x) and,
@@ -52,7 +52,7 @@ Design (all weeks are zero-indexed positions in the 156-week panel):
   The experiment ROAS is 138,000 / 77,000 = 1.79, with a 95 per cent
   interval of roughly 0.6 to 2.9.
 
-The case-study model (``mmm_book.case_model``, notebook 36) adds one
+The case-study model (``mmm_book.case_model``, notebook 32) adds one
 likelihood term, as the book describes,
 
     EXPERIMENT_LIFT_GBP ~ Normal(implied_lift, EXPERIMENT_SE_GBP),
@@ -61,7 +61,7 @@ where ``implied_lift`` is the revenue the fitted Meta curve says the pause
 cost: Meta switched off in the treatment regions for the six test weeks,
 pushed through the model's own adstock and saturation, and summed over the
 test weeks plus the cooldown.
-The national lab version (Lab 24, ``examples/ex_calibration.py``) uses a
+The national lab version (Lab 22, ``examples/ex_calibration.py``) uses a
 simpler stand-in, ``implied_meta_roas`` times
 ``EXPERIMENT_WITHHELD_SPEND_GBP``; it is an approximation because the ledger
 curve's holdout return (1.55) sits a little below the annual average (1.75).

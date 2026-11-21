@@ -65,16 +65,20 @@ from mmm_book.sedge import (
 )
 
 WEEKS = 52
-MARGIN = 0.5  # Sedge's contribution margin on incremental revenue (Chapter 37)
+MARGIN = 0.5  # Sedge's contribution margin on incremental revenue (Chapter 33)
 BREAK_EVEN = 1 / MARGIN  # a pound of media pays for itself at 2.0x
 INTERVAL = (0.05, 0.95)  # 90 per cent intervals throughout
 RESULTS_PATH = Path(__file__).resolve().parents[2] / "results" / "part9.json"
 
-# Chapter 27's two plans (annual GBP m), built on the teaching curves and
-# scored here on the fitted model so that Chapter 38 can compare like with like.
-CH27_PLANS = {
-    "ch27_unconstrained": {"search": 1.19, "meta": 0.68, "youtube": 1.13, "tv": 3.00, "ooh": 0.00},
-    "ch27_constrained": {"search": 1.22, "meta": 1.20, "youtube": 1.04, "tv": 1.82, "ooh": 0.72},
+# Chapter 24's two plans (annual GBP m), built on the teaching curves and
+# scored here on the fitted model so that Chapter 33 can compare like with like.
+TEACHING_PLANS = {
+    "teaching_unconstrained": {
+        "search": 1.19, "meta": 0.68, "youtube": 1.13, "tv": 3.00, "ooh": 0.00,
+    },
+    "teaching_constrained": {
+        "search": 1.22, "meta": 1.20, "youtube": 1.04, "tv": 1.82, "ooh": 0.72,
+    },
 }
 
 
@@ -143,14 +147,14 @@ def case_fits(df: pd.DataFrame | None = None) -> dict:
     return fits
 
 
-# ---- Chapter 34 ------------------------------------------------------------
+# ---- Chapter 31 ------------------------------------------------------------
 
 
 def _corr(a, b) -> float:
     return float(np.corrcoef(a, b)[0, 1])
 
 
-def chapter34(raw: pd.DataFrame) -> dict:
+def brief(raw: pd.DataFrame) -> dict:
     nat = raw.groupby("week").sum(numeric_only=True)
     cat = raw.groupby("week")["category_search"].mean()
     years = raw["week"].nunique() / 52
@@ -165,10 +169,10 @@ def chapter34(raw: pd.DataFrame) -> dict:
     }
 
 
-# ---- Chapter 35 ------------------------------------------------------------
+# ---- Chapter 31 ------------------------------------------------------------
 
 
-def chapter35(fits: dict) -> dict:
+def first_model(fits: dict) -> dict:
     idata1, data1, _ = fits["model1"]
     idata2, data2, _ = fits["model2"]
     # Prior predictive, exactly: the share of the prior above a threshold.
@@ -204,7 +208,7 @@ def chapter35(fits: dict) -> dict:
     }
 
 
-# ---- Chapter 36 ------------------------------------------------------------
+# ---- Chapter 32 ------------------------------------------------------------
 
 
 def _validation(fits: dict) -> dict:
@@ -228,7 +232,7 @@ def _validation(fits: dict) -> dict:
     }
 
 
-def chapter36(fits: dict) -> dict:
+def validation(fits: dict) -> dict:
     idata2, data2, _ = fits["model2"]
     idatac, datac, _ = fits["model2_cal"]
     folds = {}
@@ -274,7 +278,7 @@ def chapter36(fits: dict) -> dict:
             ),
             "meta_before": _summ(meta_b),
             "meta_after": _summ(meta_a),
-            # Appendix H's interval figure: chance the calibrated Meta ROAS clears break-even
+            # Primer 2's interval figure: chance the calibrated Meta ROAS clears break-even
             "meta_after_p_above_break_even": float((meta_a > BREAK_EVEN).mean()),
             "meta_width_before": float(np.subtract(*_q(meta_b)[::-1])),
             "meta_width_after": float(np.subtract(*_q(meta_a)[::-1])),
@@ -302,7 +306,7 @@ def _density(*samples, lo: float = 0.0, hi: float = 4.0, n: int = 161) -> dict:
     }
 
 
-# ---- Chapters 37 to 39 -------------------------------------------------------
+# ---- Chapters 33 to 34 -------------------------------------------------------
 
 
 def _annual(weekly: dict) -> dict:
@@ -324,7 +328,7 @@ def _score(curves, plan_weekly: dict, base: dict | None = None) -> dict:
     }
 
 
-def chapter37(fits: dict, curves) -> dict:
+def marginal(fits: dict, curves) -> dict:
     idatac, datac, _ = fits["model2_cal"]
     marg = marginal_roas_draws(idatac, datac)
     true_marg = true_marginal_roas()
@@ -347,7 +351,7 @@ def _bounded_plan(curves) -> dict:
     return greedy_allocate(curves, lo, hi)
 
 
-def chapter38(fits: dict, curves) -> dict:
+def optimisation(fits: dict, curves) -> dict:
     current = curves.current_money
     lo40, hi40 = band(curves, 0.40)
     naive = greedy_allocate(curves, lo40, hi40)
@@ -358,7 +362,7 @@ def chapter38(fits: dict, curves) -> dict:
         "bounded_optimiser": _score(curves, optimiser),
         "operational": _score(curves, plan),
     }
-    for key, annual in CH27_PLANS.items():
+    for key, annual in TEACHING_PLANS.items():
         plans[key] = _score(curves, _weekly(annual, curves))
     base_rev = curves.gain_draws(plan, {ch: 0.0 for ch in CHANNELS}) * WEEKS / 1e6
     current_rev = curves.gain_draws(current, {ch: 0.0 for ch in CHANNELS}) * WEEKS / 1e6
@@ -437,7 +441,7 @@ def chapter38(fits: dict, curves) -> dict:
     }
 
 
-def chapter39(fits: dict, curves, ch38: dict) -> dict:
+def recommendation(fits: dict, curves, optimisation_results: dict) -> dict:
     """Value of information: rerun the optimiser at each channel's p10 and p90 marginal return.
 
     For each channel, the draws are split by that channel's marginal return,
@@ -469,7 +473,7 @@ def chapter39(fits: dict, curves, ch38: dict) -> dict:
             "moved_m": float(moved),
         }
     ranking = sorted(CHANNELS, key=lambda c: -voi[c]["moved_m"])
-    op = ch38["plans"]["operational"]
+    op = optimisation_results["plans"]["operational"]
     return {
         "voi": voi,
         "voi_ranking": ranking,
@@ -478,17 +482,17 @@ def chapter39(fits: dict, curves, ch38: dict) -> dict:
     }
 
 
-def chapter27(curves, n_resolve: int = 300) -> dict:
-    """Chapter 27's constrained plan scored, and re-solved, on the fitted model's draws.
+def teaching_optimisation(curves, n_resolve: int = 300) -> dict:
+    """Chapter 24's constrained plan scored, and re-solved, on the fitted model's draws.
 
-    Chapter 27 builds its plans on the teaching curves; its uncertainty
+    Chapter 24 builds its plans on the teaching curves; its uncertainty
     statements come from here: the plan's gain on every posterior draw of
     the calibrated case-study model, and the plan re-solved on each of
-    ``n_resolve`` individual draws within Chapter 27's bounds (plus or minus
+    ``n_resolve`` individual draws within Chapter 24's bounds (plus or minus
     20 per cent for Search, Meta and OOH, 30 per cent for YouTube and
     Television).
     """
-    plan = _weekly(CH27_PLANS["ch27_constrained"], curves)
+    plan = _weekly(TEACHING_PLANS["teaching_constrained"], curves)
     gain = curves.gain_draws(plan) * WEEKS / 1e6
     bins = np.linspace(np.floor(gain.min() * 20) / 20, np.ceil(gain.max() * 20) / 20, 41)
     counts, _ = np.histogram(gain, bins=bins)
@@ -523,15 +527,15 @@ def part9_results(fits: dict | None = None, max_curve_draws: int | None = 2000) 
     raw = generate_sedge(seed=RANDOM_SEED)
     idatac, datac, _ = fits["model2_cal"]
     curves = posterior_curves(idatac, datac, max_draws=max_curve_draws)
-    ch38 = chapter38(fits, curves)
+    optimisation_results = optimisation(fits, curves)
     return {
-        "ch27": chapter27(curves),
-        "ch34": chapter34(raw),
-        "ch35": chapter35(fits),
-        "ch36": chapter36(fits),
-        "ch37": chapter37(fits, curves),
-        "ch38": ch38,
-        "ch39": chapter39(fits, curves, ch38),
+        "teaching_optimisation": teaching_optimisation(curves),
+        "brief": brief(raw),
+        "first_model": first_model(fits),
+        "validation": validation(fits),
+        "marginal": marginal(fits, curves),
+        "optimisation": optimisation_results,
+        "recommendation": recommendation(fits, curves, optimisation_results),
     }
 
 

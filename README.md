@@ -24,7 +24,7 @@ This repository contains code only.
 The book's text and figures are not included here.
 
 The synthetic Sedge Shoes data has known true effects built in, and every estimate the book's case study (Part IX) prints is what the companion's case-study model reports when fitted to that data, so a run of the code lands on the numbers the book prints, within the sampling noise described in [Reproducing the book's numbers](#reproducing-the-books-numbers).
-There are two exceptions, which the chapters label as illustrative: the six-month refresh in Chapter 39 and the long-term television effect Chapter 38 borrows from Chapter 29 are not computed by the code.
+There are two exceptions, which the chapters label as illustrative: the six-month refresh in Chapter 34 and the long-term television effect Chapter 33 borrows from Chapter 26 are not computed by the code.
 Every notebook is committed with its outputs, so you can read the results on GitHub before you run anything.
 
 ## Quickstart
@@ -50,10 +50,10 @@ companion/
 │   ├── adstock.py           # Geometric adstock transform
 │   ├── saturation.py        # Hill saturation transform
 │   ├── reference.py         # Reference aggregation, features, controls, and model
-│   ├── case_model.py        # The Chapter 35 to 39 regional case-study model
+│   ├── case_model.py        # The Chapter 31 to 34 regional case-study model
 │   ├── case_results.py      # Every number Part IX prints, from the fitted models
 │   ├── optimise.py          # Per-draw response curves and a bounded greedy budget allocator
-│   ├── experiment.py        # The Chapter 36 Meta geo holdout numbers
+│   ├── experiment.py        # The Chapter 32 Meta geo holdout numbers
 │   ├── metrics.py           # ROAS and contribution-share helpers
 │   └── plotting.py          # Shared plotting style
 ├── notebooks/
@@ -81,22 +81,20 @@ companion/
 | 17 | Choosing and Testing Priors | [notebooks/labs/17_priors_and_prior_predictive.ipynb](notebooks/labs/17_priors_and_prior_predictive.ipynb) |
 | 18 | Fitting the Model | [notebooks/labs/18_fitting_and_diagnostics.ipynb](notebooks/labs/18_fitting_and_diagnostics.ipynb) |
 | 19 | Hierarchical and Time-Varying MMM | [notebooks/labs/19_hierarchical_and_time_varying.ipynb](notebooks/labs/19_hierarchical_and_time_varying.ipynb) |
-| 21 | Prediction and Posterior Predictive Checks | [notebooks/labs/21_posterior_predictive_checks.ipynb](notebooks/labs/21_posterior_predictive_checks.ipynb) |
-| 23 | Synthetic Recovery and Identifiability Testing | [notebooks/labs/23_synthetic_recovery.ipynb](notebooks/labs/23_synthetic_recovery.ipynb) |
-| 24 | Experiments and Calibration | [notebooks/labs/24_experiments_and_calibration.ipynb](notebooks/labs/24_experiments_and_calibration.ipynb) |
-| 26 | Response Curves and Marginal Returns | [notebooks/labs/26_response_curves.ipynb](notebooks/labs/26_response_curves.ipynb) |
-| 27 | Budget Optimisation | [notebooks/labs/27_budget_optimisation.ipynb](notebooks/labs/27_budget_optimisation.ipynb) |
+| 20 | Validating the Model: Five Layers and Predictive Checks | [notebooks/labs/20_posterior_predictive_checks.ipynb](notebooks/labs/20_posterior_predictive_checks.ipynb) |
+| 21 | Stress-Testing the Model: Sensitivity and Synthetic Recovery | [notebooks/labs/21_synthetic_recovery.ipynb](notebooks/labs/21_synthetic_recovery.ipynb) |
+| 22 | Experiments and Calibration | [notebooks/labs/22_experiments_and_calibration.ipynb](notebooks/labs/22_experiments_and_calibration.ipynb) |
+| 23 | Contribution, ROAS and Response Curves | [notebooks/labs/23_response_curves.ipynb](notebooks/labs/23_response_curves.ipynb) |
+| 24 | Budget Optimisation | [notebooks/labs/24_budget_optimisation.ipynb](notebooks/labs/24_budget_optimisation.ipynb) |
 
 ### Case study
 
 | Chapter | Title | Notebook |
 | --- | --- | --- |
-| 34 | The Brief and the Data | [notebooks/case_study/34_the_brief_and_the_data.ipynb](notebooks/case_study/34_the_brief_and_the_data.ipynb) |
-| 35 | A First Model, and Why It Failed | [notebooks/case_study/35_a_first_model_and_why_it_failed.ipynb](notebooks/case_study/35_a_first_model_and_why_it_failed.ipynb) |
-| 36 | Validation and Calibration | [notebooks/case_study/36_validation_and_calibration.ipynb](notebooks/case_study/36_validation_and_calibration.ipynb) |
-| 37 | From Average Return to the Next Pound | [notebooks/case_study/37_average_to_next_pound.ipynb](notebooks/case_study/37_average_to_next_pound.ipynb) |
-| 38 | Optimising the Budget | [notebooks/case_study/38_optimising_the_budget.ipynb](notebooks/case_study/38_optimising_the_budget.ipynb) |
-| 39 | The Recommendation, and What Happened Next | [notebooks/case_study/39_the_recommendation.ipynb](notebooks/case_study/39_the_recommendation.ipynb) |
+| 31 | The Brief, the Data and a First Model | [notebooks/case_study/31a_the_brief_and_the_data.ipynb](notebooks/case_study/31a_the_brief_and_the_data.ipynb)<br>[notebooks/case_study/31b_a_first_model_and_why_it_failed.ipynb](notebooks/case_study/31b_a_first_model_and_why_it_failed.ipynb) |
+| 32 | Validation and Calibration | [notebooks/case_study/32_validation_and_calibration.ipynb](notebooks/case_study/32_validation_and_calibration.ipynb) |
+| 33 | From the Next Pound to the Budget Plan | [notebooks/case_study/33a_average_to_next_pound.ipynb](notebooks/case_study/33a_average_to_next_pound.ipynb)<br>[notebooks/case_study/33b_optimising_the_budget.ipynb](notebooks/case_study/33b_optimising_the_budget.ipynb) |
+| 34 | The Recommendation, and What Happened Next | [notebooks/case_study/34_the_recommendation.ipynb](notebooks/case_study/34_the_recommendation.ipynb) |
 
 ### Bridge notebook and exercises
 
@@ -119,13 +117,13 @@ Each channel's spend is adstocked and saturated, then scaled so that its aggrega
 Because the true ROAS is known, Sedge is a useful test bed: later labs can check whether a fitted model actually recovers it.
 
 The table below gives the generator's built-in truth.
-These are the values the book's teaching chapters 25 to 28 use, and the ones Appendix F compares the fitted model with.
+These are the values the book's teaching chapters 23 to 25 use, and the ones Appendix F compares the fitted model with.
 
 | | Book | Generator default |
 | --- | --- | --- |
 | Regions, weeks, rows | 18, 156, 2,808 | 18, 156, 2,808 |
 | Annual revenue | about 48m pounds | about 48m pounds |
-| Annual media | 6.0m (TV 1.4, Search 1.4, Meta 1.5, YouTube 0.8, OOH 0.9) | within about 5 per cent of each |
+| Annual media | 6.0m (TV 1.4, Search 1.4, Meta 1.5, YouTube 0.8, OOH 0.9) | exactly these |
 | Average ROAS | TV 2.4, Search 2.7, Meta 1.75, YouTube 2.0, OOH 1.5 | exactly these (`GROUND_TRUTH`) |
 | Marginal ROAS at current spend | TV 2.1, Search 1.4, Meta 0.9, YouTube 1.8, OOH 1.47 | within about 5 per cent (`true_marginal_roas()`) |
 
@@ -176,16 +174,16 @@ Where it differs from the book's model, the difference is deliberate, and each o
   Labs 13, 14 and 17 run no MCMC.
   Lab 18 also shows, on purpose, the warnings a shorter, less cautious run produces, and how to work through them.
   Every interval the labs report is a 90 per cent interval, as in the book.
-- **The case-study model.** `mmm_book.case_model` is the model the book describes for Chapters 35 to 39, fitted to the regional panel.
+- **The case-study model.** `mmm_book.case_model` is the model the book describes for Chapters 31 to 34, fitted to the regional panel.
   It estimates adstock retention and Hill half-saturation for every channel, puts priors directly on ROAS, pools regional media effects, and projects the Meta holdout through the fitted curves.
   Each fit runs four chains of 2,000 draws (8,000 in all) after 1,000 warm-up steps at a target acceptance rate of 0.97 and is cached in `.cache/`.
 - **Part IX reports the fitted model.** `mmm_book.case_results` turns the five case-study fits into every number Part IX prints, and writes them to `results/part9.json`, which the book's Part IX figures read.
   Response curves and the budget optimiser use `case_model.posterior_curves`: one curve per posterior draw, built from that draw's own adstock, saturation and regional scales, so the uncertainty in the curves' shapes, not only their heights, reaches every plan and every probability.
   `tests/test_book_part9.py` pins the printed values.
-- **The teaching chapters use the built-in truth.** Chapters 27 and 28 do their optimisation arithmetic on `optimise.ResponseCurves` with `ledger_betas`, the curves a model would have if it had recovered the generator's true values exactly; `tests/test_book_optimiser.py` pins those figures.
-- **Held-out validation without leakage.** With `train_weeks` set, `prepare_case_data` scales the controls and trend, and sets each region's reference activity and the spend that defines ROAS, from the training weeks alone (Chapter 21).
-  Lab 21 runs the same kind of forward split on the reference model (`reference_model(nat, n_train=...)`) and checks the coverage of its 90 per cent intervals on the held-out weeks.
-- **The Meta geo holdout.** Chapter 36's experiment pauses Meta for six weeks in eight treatment regions, with eight matched controls.
+- **The teaching chapters use the built-in truth.** Chapters 24 and 25 do their optimisation arithmetic on `optimise.ResponseCurves` with `ledger_betas`, the curves a model would have if it had recovered the generator's true values exactly; `tests/test_book_optimiser.py` pins those figures.
+- **Held-out validation without leakage.** With `train_weeks` set, `prepare_case_data` scales the controls and trend, and sets each region's reference activity and the spend that defines ROAS, from the training weeks alone (Chapter 20).
+  Lab 20 runs the same kind of forward split on the reference model (`reference_model(nat, n_train=...)`) and checks the coverage of its 90 per cent intervals on the held-out weeks.
+- **The Meta geo holdout.** Chapter 32's experiment pauses Meta for six weeks in eight treatment regions, with eight matched controls.
   A holdout measures the return on the spend that was switched off, which is an average-type quantity for that slice; a push would measure the return on the extra spend, which is a marginal-type quantity.
   `mmm_book.experiment` recomputes the design: about 77,000 pounds withheld (12,900 a week), an expected lost revenue on the true curve of 120,000 pounds over the six weeks plus a two-week cooldown, and a standard error of about 45,000 pounds from placebo windows.
   The observed result is 138,000 pounds of lift, a ROAS of 1.79 plus or minus 0.58.
@@ -193,8 +191,8 @@ Where it differs from the book's model, the difference is deliberate, and each o
   It enters the case-study model once, as a likelihood term on the lift the model's own curve implies for the same regions and weeks.
   `examples/ex_calibration.py` uses a simpler stand-in on the national model (ROAS times withheld spend).
 - **An experiment enters once.** Sedge's two television tests set the television prior and are not added again as likelihood terms; the Meta holdout is kept out of every prior.
-- **Lab 24 and Exercise 4** calibrate Search to a simulated experiment, a generic teaching example that does not use the Sedge experiment.
-  The experiment's standard error is widened for transport to Chapter 24's $\sigma_{\text{eff}}$ before it enters the likelihood.
+- **Lab 22 and Exercise 4** calibrate Search to a simulated experiment, a generic teaching example that does not use the Sedge experiment.
+  The experiment's standard error is widened for transport to Chapter 22's $\sigma_{\text{eff}}$ before it enters the likelihood.
 
 ## Running the tests
 
@@ -212,7 +210,7 @@ Most of `tests/test_book_part9.py` checks the book's printed values against that
 Three further tests refit the five case-study models on your machine (several minutes on a laptop the first time; the fits are then cached in `.cache/`).
 A refit is a fresh Monte Carlo run: on a different operating system or processor, small differences in floating-point arithmetic send the sampler's chains down different paths.
 Posterior means typically land within about 0.02 of the reference run, interval ends and plan gains within about 0.07, and pound figures within a few per cent.
-The tests check that a refit stays within that noise, passes every sampler diagnostic (no divergences, R-hat at most 1.01) and reaches the book's main conclusions: calibration moves Meta up, television's next pound beats Meta's, the plans beat the current mix, and the ranking of experiments in Chapter 39 holds.
+The tests check that a refit stays within that noise, passes every sampler diagnostic (no divergences, R-hat at most 1.01) and reaches the book's main conclusions: calibration moves Meta up, television's next pound beats Meta's, the plans beat the current mix, and Meta ranks first and television last among the experiments of Chapter 34.
 The case-study notebooks are committed with the outputs of the reference run, so what you read on GitHub matches the book exactly.
 The GitHub Actions workflow in `.github/workflows/ci.yml` runs this same suite on every push and pull request.
 
@@ -244,7 +242,7 @@ GitHub's "Cite this repository" button reads [`CITATION.cff`](CITATION.cff); the
   author  = {Stent, Mark},
   title   = {Marketing Mix Modelling - Companion Code},
   year    = {2026},
-  version = {1.0.0},
+  version = {1.1.0},
   url     = {https://github.com/markstent/mmm-book-companion}
 }
 ```

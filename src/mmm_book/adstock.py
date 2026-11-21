@@ -22,8 +22,8 @@ def geometric_adstock(
     * ``normalize=True`` (the default here, used by the labs and the
       Sedge Shoes generator) rescales the lag weights to sum to one, so
       adstock does not inflate the total media level and a steady spend
-      level maps to itself. The same 100 then gives about 51.6, 25.8,
-      12.9, ... for ``l_max=12`` and alpha = 0.5.
+      level maps to itself. The same 100 then gives about 50.0, 25.0,
+      12.5, ... for ``l_max=12`` and alpha = 0.5.
 
     The two differ only by a constant factor, ``sum(alpha ** k)`` over the
     lags, so the temporal weighting is identical. PyMC-Marketing's

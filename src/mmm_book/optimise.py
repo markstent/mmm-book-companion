@@ -11,17 +11,17 @@ regional scales, so every draw has its own curve, and a plan can be scored
 on each of them. Its ``money_contribution`` is the average over draws, the
 posterior mean curve.
 
-``ResponseCurves`` is the teaching version that Chapters 27 and 28 and the
+``ResponseCurves`` is the teaching version that Chapters 24 and 25 and the
 labs use. It turns a national weekly aggregate and one beta per channel
 into expected weekly contribution, with the generator's own adstock and
 saturation shapes, the same features as ``mmm_book.reference``.
 ``ledger_betas`` gives the betas that make those curves reproduce the
 built-in true average returns exactly (2.4x Television, 2.7x Search, 1.75x
-Meta, 2.0x YouTube, 1.5x OOH), so Chapters 27 and 28 can do their
+Meta, 2.0x YouTube, 1.5x OOH), so Chapters 24 and 25 can do their
 arithmetic on one known set of curves.
 
 ``greedy_allocate`` is the dependency-light greedy marginal allocator of
-Lab 27, extended with per-channel lower and upper bounds.
+Lab 24, extended with per-channel lower and upper bounds.
 """
 
 from __future__ import annotations
@@ -256,7 +256,7 @@ def band(curves: ResponseCurves, pct: float) -> tuple[dict[str, float], dict[str
     return lo, hi
 
 
-# The risk-aware operational plan of Chapter 38 (annual GBP): Search
+# The risk-aware operational plan of Chapter 33 (annual GBP): Search
 # 1.30m, Meta 1.25m, YouTube 0.85m, Television 1.65m, OOH 0.95m.
 BOOK_PLAN_ANNUAL = {
     "search": 1_300_000.0,
@@ -270,7 +270,7 @@ BOOK_PLAN_ANNUAL = {
 # keeps a strategic floor (-100k), Television has an inventory ceiling
 # (+250k), the two channels no experiment has tested (YouTube, OOH) may
 # grow by at most 50k each, and Meta may fall by at most 20 per cent (to 1.20m), the
-# first-year rule for mature channels in Chapter 27.
+# first-year rule for mature channels in Chapter 24.
 BOOK_PLAN_ANNUAL_BOUNDS = {
     "search": (1_300_000.0, 1_400_000.0),
     "tv": (1_400_000.0, 1_650_000.0),
@@ -281,7 +281,7 @@ BOOK_PLAN_ANNUAL_BOUNDS = {
 
 
 def book_plan_bounds(curves: ResponseCurves) -> tuple[dict[str, float], dict[str, float]]:
-    """Weekly bounds for the Chapter 38 operational plan.
+    """Weekly bounds for the Chapter 33 operational plan.
 
     The annual bounds are converted to weekly figures and scaled by the
     ratio of the simulated budget to the book's GBP 6.0m, so the bounds sit
@@ -294,6 +294,6 @@ def book_plan_bounds(curves: ResponseCurves) -> tuple[dict[str, float], dict[str
 
 
 def book_plan_weekly(curves: ResponseCurves) -> dict[str, float]:
-    """The Chapter 38 plan as weekly GBP-equivalent, on the same total as ``curves``."""
+    """The Chapter 33 plan as weekly GBP-equivalent, on the same total as ``curves``."""
     scale = curves.total_budget * 52.0 / 6_000_000.0
     return {ch: BOOK_PLAN_ANNUAL[ch] / 52.0 * scale for ch in CHANNELS}

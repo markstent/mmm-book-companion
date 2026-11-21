@@ -1,7 +1,7 @@
 """Tie the synthetic generator to the book's canonical Sedge Shoes ledger.
 
-The values below are the figures printed in the book (Chapters 34, 36 and
-37) and held in check_numbers.py at the repository root (CANONICAL). If
+The values below are the figures printed in the book (Chapters 31, 32 and
+33) and held in check_numbers.py at the repository root (CANONICAL). If
 the book ledger changes, these constants and ``GROUND_TRUTH`` must change
 together.
 """
@@ -38,7 +38,7 @@ def test_ground_truth_matches_book_ledger():
 def test_default_panel_has_book_dimensions(panel):
     assert BOOK_N_REGIONS == 18
     assert panel["region"].nunique() == 18
-    assert len(panel) == 2808  # 156 weeks x 18 regions, Chapter 34
+    assert len(panel) == 2808  # 156 weeks x 18 regions, Chapter 31
 
 
 def _annual_spend_m(panel):
@@ -79,7 +79,7 @@ def test_marginal_roas_matches_book_ledger():
     marginal = true_marginal_roas()
     for ch, target in BOOK_MARGINAL_ROAS.items():
         assert marginal[ch] == pytest.approx(target, rel=0.05), ch
-    # The ranking story of Chapter 37: Search leads on average but not at
+    # The ranking story of Chapter 33: Search leads on average but not at
     # the margin, Television leads at the margin, Meta is below 1.
     assert marginal["tv"] > marginal["youtube"] > marginal["search"]
     assert marginal["meta"] < 1.0
@@ -165,7 +165,7 @@ def test_a_push_could_not_have_read_the_holdout_roas():
 
     On a concave curve the return on extra spend is capped by the marginal return
     at the starting point, so a push in the same eight regions reads far below
-    the holdout.  That is why the Chapter 36 experiment is a holdout.
+    the holdout.  That is why the Chapter 32 experiment is a holdout.
     """
     from mmm_book.experiment import (
         EXPERIMENT_LEDGER_EXPECTED_ROAS,

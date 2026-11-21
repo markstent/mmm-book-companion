@@ -1,4 +1,4 @@
-"""The Sedge Shoes data facts Appendix F and Chapter 34 print.
+"""The Sedge Shoes data facts Appendix F and Chapter 31 print.
 
 Appendix F prints weeks 6 to 15 of ``region_0`` in three tables, rounded for
 the page, and states the panel's shape and totals. These tests regenerate the
@@ -125,7 +125,7 @@ def test_yearly_revenue_and_spend(df):
     y = _yearly(df)
     assert y["revenue"].round(2).tolist() == [47.25, 46.04, 50.56]
     assert y["spend"].round(2).tolist() == [6.10, 5.44, 6.46]
-    # Chapter 34: an average year of the history is about 48 million
+    # Chapter 31: an average year of the history is about 48 million
     assert round(y["revenue"].mean(), 1) == 47.9
 
 

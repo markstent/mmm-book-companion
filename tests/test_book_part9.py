@@ -1,4 +1,4 @@
-"""The numbers Part IX of the book prints (Chapters 34 to 39 and Appendix F).
+"""The numbers Part IX of the book prints (Chapters 31 to 34 and Appendix F).
 
 Every estimate in the Sedge case study is what the case-study model reports
 when fitted to the synthetic data. The book prints the reference run, saved in
@@ -52,24 +52,24 @@ FITS = ("model1", "model2", "model2_cal", "model2_train130", "model2_train104")
 
 def all_diagnostics(r):
     return {
-        "model1": r["ch35"]["model1"]["diagnostics"],
-        "model2": r["ch35"]["model2"]["diagnostics"],
-        "model2_cal": r["ch36"]["holdout"]["diagnostics"],
-        "model2_train130": r["ch36"]["validation"]["diagnostics"],
-        "model2_train104": r["ch36"]["validation"]["diagnostics_104"],
+        "model1": r["first_model"]["model1"]["diagnostics"],
+        "model2": r["first_model"]["model2"]["diagnostics"],
+        "model2_cal": r["validation"]["holdout"]["diagnostics"],
+        "model2_train130": r["validation"]["validation"]["diagnostics"],
+        "model2_train104": r["validation"]["validation"]["diagnostics_104"],
     }
 
 
-def test_chapter34_data(r):
-    c = r["ch34"]
+def test_brief_data(r):
+    c = r["brief"]
     assert close(c["corr_meta_youtube_national"], 0.85, 0.005)
     assert close(c["corr_meta_youtube_panel"], 0.76, 0.005)
     assert close(c["corr_search_category"], 0.72, 0.005)
     assert close(c["annual_revenue_m"], 47.9, 0.05)
 
 
-def test_chapter35_first_model_and_repair(r):
-    c = r["ch35"]
+def test_first_model_and_repair(r):
+    c = r["first_model"]
     assert close(c["prior_ooh_share_above_20m"], 0.026, 0.0005)
     assert close(c["prior_search_share_halflife_above_8"], 0.020, 0.0005)
     m1 = c["model1"]
@@ -90,8 +90,8 @@ def test_chapter35_first_model_and_repair(r):
     assert close(c["pair_corr"], -0.45, 0.005)
 
 
-def test_chapter36_validation_and_calibration(r):
-    c = r["ch36"]
+def test_validation_and_calibration(r):
+    c = r["validation"]
     v = c["validation"]
     assert close(v["test_wmape"], 0.047, 0.0005)
     assert close(v["mean_error_in_launch"], 117_000, 1_000)
@@ -104,7 +104,7 @@ def test_chapter36_validation_and_calibration(r):
     assert round(h["meta_before"]["hi"], 2) == 2.29
     assert (round(h["meta_after"]["mean"], 2), round(h["meta_after"]["lo"], 2)) == (1.65, 1.05)
     assert round(h["meta_after"]["hi"], 2) == 2.36
-    # Appendix H (Figure H.2): "about 18 in 100" above the 2.0x break-even
+    # Primer 2: "about 18 in 100" above the 2.0x break-even
     assert round(h["meta_after_p_above_break_even"] * 100) == 18
     assert close(h["lift_before"]["mean"], 97_000, 1_000)
     assert close(h["lift_before_sd"], 26_000, 1_000)
@@ -128,8 +128,8 @@ def test_chapter36_validation_and_calibration(r):
     assert sorted(inside) == ["meta", "ooh", "search", "youtube"]
 
 
-def test_chapter37_marginal_returns(r):
-    c = r["ch37"]
+def test_marginal_returns(r):
+    c = r["marginal"]
     printed = {"search": 1.39, "meta": 1.11, "youtube": 1.87, "tv": 2.22, "ooh": 1.39}
     for ch, value in printed.items():
         assert round(c[ch]["marginal"]["mean"], 2) == value, ch
@@ -139,8 +139,8 @@ def test_chapter37_marginal_returns(r):
         assert c[ch]["p_marginal_above_break_even"] < 0.015
 
 
-def test_chapter38_plans_and_scenarios(r):
-    p = r["ch38"]["plans"]
+def test_optimisation_plans_and_scenarios(r):
+    p = r["optimisation"]["plans"]
     assert close(p["naive_40"]["gain_m"]["mean"], 0.58, 0.005)
     assert close(p["naive_40"]["p_gain"], 0.97, 0.005)
     assert close(p["bounded_optimiser"]["gain_m"]["mean"], 0.277, 0.002)
@@ -150,9 +150,9 @@ def test_chapter38_plans_and_scenarios(r):
     assert close(op["gain_m"]["hi"], 0.44, 0.005)
     assert op["p_gain"] > 0.99
     assert close(op["profit_m"], 0.133, 0.002)
-    assert close(p["ch27_unconstrained"]["p_gain"], 0.94, 0.005)
-    assert close(p["ch27_constrained"]["p_gain"], 0.99, 0.005)
-    s = r["ch38"]["scenarios"]
+    assert close(p["teaching_unconstrained"]["p_gain"], 0.94, 0.005)
+    assert close(p["teaching_constrained"]["p_gain"], 0.99, 0.005)
+    s = r["optimisation"]["scenarios"]
     assert close(s["cut15"]["difference_m"]["mean"], -1.52, 0.005)
     assert close(s["cut15"]["profit_change_m"], 0.14, 0.005)
     assert close(s["up10"]["difference_m"]["mean"], 0.96, 0.005)
@@ -161,8 +161,8 @@ def test_chapter38_plans_and_scenarios(r):
     assert close(s["targeted_cut"]["profit_change_m"], 0.31, 0.005)
 
 
-def test_chapter27_uncertainty_from_the_fitted_model(r):
-    c = r["ch27"]
+def test_teaching_optimisation_uncertainty_from_the_fitted_model(r):
+    c = r["teaching_optimisation"]
     assert close(c["gain_m"]["mean"], 0.45, 0.005)
     assert close(c["gain_m"]["lo"], 0.12, 0.005)
     assert close(c["gain_m"]["hi"], 0.81, 0.005)
@@ -174,8 +174,8 @@ def test_chapter27_uncertainty_from_the_fitted_model(r):
     assert pct["youtube"][4] - pct["youtube"][0] > 0.4  # YouTube moves most
 
 
-def test_chapter39_value_of_information(r):
-    c = r["ch39"]
+def test_recommendation_value_of_information(r):
+    c = r["recommendation"]
     assert c["voi_ranking"][:2] == ["meta", "youtube"]
     assert c["voi_ranking"][-1] == "tv"
     assert close(c["voi"]["meta"]["moved_m"], 0.54, 0.01)
@@ -209,9 +209,9 @@ CALIBRATED_PRINTED = {
 
 
 def test_appendix_f_results_table(r):
-    m1 = r["ch35"]["model1"]["roas"]
-    m2 = r["ch35"]["model2"]["roas"]
-    cal = r["ch36"]["final"]
+    m1 = r["first_model"]["model1"]["roas"]
+    m2 = r["first_model"]["model2"]["roas"]
+    cal = r["validation"]["final"]
     for ch in CHANNELS:
         assert rounded(m1[ch]) == MODEL1_PRINTED[ch], ch
         assert rounded(m2[ch]) == MODEL2_PRINTED[ch], ch
@@ -231,13 +231,13 @@ def test_appendix_f_results_table(r):
     # Model 1's Television interval misses the truth on the low side
     assert m1["tv"]["hi"] < GROUND_TRUTH["tv"]
     # "within 3 per cent of the true 12.72 million"
-    true_total = sum(t["contribution_m"] for t in r["ch36"]["truth"].values())
+    true_total = sum(t["contribution_m"] for t in r["validation"]["truth"].values())
     assert round(true_total, 3) == 12.715  # printed as 12.72 (half up)
     assert 0 < 1 - cal["total"]["contribution_m"] / true_total < 0.03
 
 
-def test_chapter35_model1_table(r):
-    m1 = r["ch35"]["model1"]["roas"]
+def test_first_model_model1_table(r):
+    m1 = r["first_model"]["model1"]["roas"]
     printed = {
         "search": (4.7, 3.9, 5.5),
         "meta": (1.3, 0.8, 1.9),
@@ -250,7 +250,7 @@ def test_chapter35_model1_table(r):
 
 
 def test_fit_and_sampler_diagnostics(r):
-    m1, m2 = r["ch35"]["model1"], r["ch35"]["model2"]
+    m1, m2 = r["first_model"]["model1"], r["first_model"]["model2"]
     # Model 2 brings Search back "with almost no change in fit" (R squared 0.93 again)
     assert round(m2["r2"], 2) == 0.93
     assert round(m2["wmape"], 3) == 0.052
@@ -271,11 +271,11 @@ def test_fit_and_sampler_diagnostics(r):
     assert round(diags["model2"]["max_rhat"], 3) == 1.009
 
 
-# ---- Chapter 35: contributions -------------------------------------------------
+# ---- Chapter 31: contributions -------------------------------------------------
 
 
-def test_chapter35_meta_youtube_contributions(r):
-    c = r["ch35"]
+def test_first_model_meta_youtube_contributions(r):
+    c = r["first_model"]
     assert rounded(c["meta_m"], 1) == (2.3, 1.4, 3.4)
     assert rounded(c["youtube_m"], 1) == (1.9, 1.1, 2.8)
     assert rounded(c["pair_m"], 1) == (4.1, 3.3, 5.3)
@@ -285,11 +285,11 @@ def test_chapter35_meta_youtube_contributions(r):
     assert round(c["model1"]["wmape"] * 100, 1) == 5.1
 
 
-# ---- Chapter 36 ----------------------------------------------------------------
+# ---- Chapter 32 ----------------------------------------------------------------
 
 
-def test_chapter36_folds(r):
-    folds = r["ch36"]["folds"]
+def test_validation_folds(r):
+    folds = r["validation"]["folds"]
     assert set(folds) == {"104", "130", "156"}
 
     def span(ch):
@@ -308,8 +308,8 @@ def test_chapter36_folds(r):
     assert min(moves, key=moves.get) == "tv"
 
 
-def test_chapter36_validation(r):
-    v = r["ch36"]["validation"]
+def test_validation_hold_out(r):
+    v = r["validation"]["validation"]
     assert v["train_weeks"] == 130
     assert v["launch_week"] == 141
     assert round(v["test_wmape"] * 100, 1) == 4.7
@@ -317,19 +317,19 @@ def test_chapter36_validation(r):
     assert round(v["mean_error_in_launch"], -3) == 117_000
 
 
-def test_chapter36_model2_table(r):
-    m2 = r["ch36"]["model2"]
+def test_validation_model2_table(r):
+    m2 = r["validation"]["model2"]
     printed = {"search": 3.12, "meta": 2.28, "youtube": 1.87, "tv": 3.60, "ooh": 1.48}
     for ch, value in printed.items():
         assert round(m2[ch]["contribution_m"], 2) == value, ch
         assert rounded(m2[ch]) == MODEL2_PRINTED[ch], ch
     assert round(m2["total"]["contribution_m"], 2) == 12.35
     assert round(m2["total"]["roas"], 2) == 2.06
-    assert m2 == r["ch35"]["model2"]["roas"]
+    assert m2 == r["first_model"]["model2"]["roas"]
 
 
-def test_chapter36_final_table(r):
-    final = r["ch36"]["final"]
+def test_validation_final_table(r):
+    final = r["validation"]["final"]
     printed = {"search": 3.11, "meta": 2.48, "youtube": 1.76, "tv": 3.60, "ooh": 1.49}
     for ch, value in printed.items():
         assert round(final[ch]["contribution_m"], 2) == value, ch
@@ -341,13 +341,13 @@ def test_chapter36_final_table(r):
     assert round(final["total"]["spend_m"], 2) == 6.00
     assert round(final["total"]["roas"], 2) == 2.07
     # calibration moves about 0.2 million towards Meta and a little away from YouTube
-    m2 = r["ch36"]["model2"]
+    m2 = r["validation"]["model2"]
     assert round(final["meta"]["contribution_m"] - m2["meta"]["contribution_m"], 1) == 0.2
     assert final["youtube"]["contribution_m"] < m2["youtube"]["contribution_m"]
 
 
-def test_chapter36_holdout_in_text(r):
-    h = r["ch36"]["holdout"]
+def test_validation_holdout_in_text(r):
+    h = r["validation"]["holdout"]
     assert rounded(h["meta_before"]) == (1.52, 0.90, 2.29)
     assert rounded(h["meta_after"]) == (1.65, 1.05, 2.36)
     assert rounded(h["youtube_before"]) == (2.34, 1.36, 3.45)
@@ -364,9 +364,9 @@ def test_chapter36_holdout_in_text(r):
     assert rounded(h["annual_over_test_roas_before"], 1) == (1.2, 1.0, 1.5)
 
 
-def test_chapter36_profit_lens(r):
-    final = r["ch36"]["final"]
-    profit = r["ch36"]["profit_m"]
+def test_validation_profit_lens(r):
+    final = r["validation"]["final"]
+    profit = r["validation"]["profit_m"]
     printed = {
         # channel: (contribution margin, profit after media, ROI per cent)
         "search": (1.55, 0.15, 11),
@@ -384,11 +384,11 @@ def test_chapter36_profit_lens(r):
     assert round(100 * profit["total"] / final["total"]["spend_m"]) == 4
 
 
-# ---- Chapter 37 and Appendix F: marginal returns ---------------------------------
+# ---- Chapter 33 and Appendix F: marginal returns ---------------------------------
 
 
 def test_marginal_return_intervals(r):
-    c = r["ch37"]
+    c = r["marginal"]
     printed = {
         "search": (1.39, 1.02, 1.78),
         "meta": (1.11, 0.64, 1.58),
@@ -420,8 +420,8 @@ def test_marginal_return_intervals(r):
     assert fitted[-1] == true[-1] == "meta"
 
 
-def test_chapter37_break_even_probabilities(r):
-    c = r["ch37"]
+def test_marginal_break_even_probabilities(r):
+    c = r["marginal"]
     p = {ch: c[ch]["p_marginal_above_break_even"] for ch in CHANNELS}
     assert round(p["search"] * 100) == 1  # "1%"
     assert round(p["ooh"] * 100) == 1  # "1%"
@@ -430,15 +430,15 @@ def test_chapter37_break_even_probabilities(r):
     assert p["tv"] > 0.99  # "over 99%"
 
 
-# ---- Chapter 38 ------------------------------------------------------------------
+# ---- Chapter 33 ------------------------------------------------------------------
 
 
 def plan_row(plan_m):
     return {ch: round(v, 2) for ch, v in plan_m.items()}
 
 
-def test_chapter38_naive_plan(r):
-    c = r["ch38"]
+def test_optimisation_naive_plan(r):
+    c = r["optimisation"]
     naive = c["plans"]["naive_40"]
     assert plan_row(naive["plan_m"]) == {
         "search": 1.29,
@@ -459,8 +459,8 @@ def test_chapter38_naive_plan(r):
     assert round(c["youtube_marginal"]["hi"], 2) == 2.75
 
 
-def test_chapter38_optimiser_and_operational_plan(r):
-    c = r["ch38"]
+def test_optimisation_optimiser_and_operational_plan(r):
+    c = r["optimisation"]
     own = c["plans"]["bounded_optimiser"]
     assert plan_row(own["plan_m"]) == {
         "search": 1.40,
@@ -487,7 +487,7 @@ def test_chapter38_optimiser_and_operational_plan(r):
     # "in every one, television's next pound earns more than Meta's"
     assert c["p_tv_marginal_above_meta"] == 1.0
     # Search and OOH have the same marginal return, about 1.4
-    m = r["ch37"]
+    m = r["marginal"]
     assert (
         round(m["search"]["marginal_from_curves"], 1)
         == round(m["ooh"]["marginal_from_curves"], 1)
@@ -495,8 +495,8 @@ def test_chapter38_optimiser_and_operational_plan(r):
     )
 
 
-def test_chapter38_fixed_budget_arithmetic(r):
-    s = r["ch38"]["fixed_budget_steps"]
+def test_optimisation_fixed_budget_arithmetic(r):
+    s = r["optimisation"]["fixed_budget_steps"]
     assert round(s["youtube"]["revenue"], -3) == 92_000
     assert round(s["ooh"]["revenue"], -3) == 69_000
     assert round(s["meta"]["revenue"], -3) == 61_000
@@ -513,12 +513,12 @@ def test_chapter38_fixed_budget_arithmetic(r):
     assert s["youtube"]["profit"] < 0
 
 
-def test_chapter38_plans_table(r):
-    p = r["ch38"]["plans"]
+def test_optimisation_plans_table(r):
+    p = r["optimisation"]["plans"]
     printed = {
         # plan: (gain, profit, chance per cent)
-        "ch27_unconstrained": (0.81, 0.40, 94),
-        "ch27_constrained": (0.45, 0.22, 99),
+        "teaching_unconstrained": (0.81, 0.40, 94),
+        "teaching_constrained": (0.45, 0.22, 99),
         "naive_40": (0.58, 0.29, 97),
         "operational": (0.27, 0.13, None),
     }
@@ -529,14 +529,14 @@ def test_chapter38_plans_table(r):
             assert round(p[plan]["p_gain"] * 100) == chance, plan
     assert p["operational"]["p_gain"] > 0.99  # "over 99%"
     rows = {
-        "ch27_unconstrained": {
+        "teaching_unconstrained": {
             "search": 1.19,
             "meta": 0.68,
             "youtube": 1.13,
             "tv": 3.00,
             "ooh": 0.00,
         },
-        "ch27_constrained": {
+        "teaching_constrained": {
             "search": 1.22,
             "meta": 1.20,
             "youtube": 1.04,
@@ -548,8 +548,8 @@ def test_chapter38_plans_table(r):
         assert plan_row(p[plan]["plan_m"]) == row, plan
 
 
-def test_chapter38_scenarios_table(r):
-    c = r["ch38"]
+def test_optimisation_scenarios_table(r):
+    c = r["optimisation"]
     s = c["scenarios"]
     assert round(s["cut15"]["revenue_m"]["mean"], 1) == 11.2
     assert round(c["operational_revenue_m"]["mean"], 1) == 12.7
@@ -560,7 +560,7 @@ def test_chapter38_scenarios_table(r):
     assert s["cut15"]["p_profit_up"] == 1.0
     assert s["up10"]["p_profit_up"] == 0.0
     # what the 2.07x average would have suggested
-    roas = r["ch36"]["final"]["total"]["roas"]
+    roas = r["validation"]["final"]["total"]["roas"]
     assert round(roas * 0.9, 2) == 1.86
     assert round(roas * 0.6, 2) == 1.24
     # the long-term effect that would cancel each cut's advantage
@@ -572,11 +572,11 @@ def test_chapter38_scenarios_table(r):
     )  # half
 
 
-# ---- Chapter 39 ------------------------------------------------------------------
+# ---- Chapter 34 ------------------------------------------------------------------
 
 
-def test_chapter39_value_of_information_in_text(r):
-    c = r["ch39"]
+def test_recommendation_value_of_information_in_text(r):
+    c = r["recommendation"]
     meta = c["voi"]["meta"]
     assert (round(meta["marginal_p10"], 2), round(meta["marginal_p90"], 2)) == (0.76, 1.49)
     assert round(meta["moved_m"], 2) == 0.54
@@ -589,6 +589,32 @@ def test_chapter39_value_of_information_in_text(r):
     assert round(6 * (meta["high_plan_m"]["meta"] / 1.50 - 1)) == 1
     assert meta["high_plan_m"]["youtube"] < 0.80
     assert round(c["half_year_gain_m"], 3) == 0.133
+
+
+def test_numbers_added_in_the_release_pass(r):
+    """Figures printed in the tables added late: versions, test return, scenarios, VOI."""
+    m1, m2 = r["first_model"]["model1"], r["first_model"]["model2"]
+    assert round(m1["roas"]["total"]["contribution_m"], 2) == 14.15
+    assert round(m2["roas"]["total"]["contribution_m"], 2) == 12.35
+    assert round(m2["wmape"] * 100, 1) == 5.2
+    h = r["validation"]["holdout"]
+    assert round(h["test_roas_after"]["mean"], 2) == 1.38
+    assert round(h["annual_over_test_roas_before"]["mean"], 1) == 1.2
+    cv = r["validation"]["folds"]
+    assert [round(cv[w]["tv"], 2) for w in ("104", "130", "156")] == [2.58, 2.63, 2.57]
+    sc = r["optimisation"]["scenarios"]
+    assert round(-sc["targeted_cut"]["difference_m"]["mean"] / 0.9, 1) == 1.3
+    assert round(sc["targeted_cut"]["profit_change_m"], 2) == 0.31
+    voi = r["recommendation"]["voi"]
+    printed = {"meta": (0.76, 1.49), "youtube": (1.20, 2.55), "search": (1.09, 1.68),
+               "ooh": (1.10, 1.68), "tv": (2.14, 2.30)}
+    for ch, (lo, hi) in printed.items():
+        got = (round(voi[ch]["marginal_p10"], 2), round(voi[ch]["marginal_p90"], 2))
+        assert got == (lo, hi), ch
+    t = r["teaching_optimisation"]
+    gain = tuple(round(t["gain_m"][k], 2) for k in ("mean", "lo", "hi"))
+    assert gain == (0.45, 0.12, 0.81)
+    assert t["n_draws"] == 2000 and t["n_resolved"] == 300
 
 
 # ---- A fresh fit on this machine ------------------------------------------------
@@ -642,12 +668,17 @@ def test_a_fresh_fit_passes_every_sampler_diagnostic(fresh):
 def test_a_fresh_fit_reaches_the_books_conclusions(fresh):
     f = fresh
     # Calibration moves Meta up and does not widen its interval much.
-    h = f["ch36"]["holdout"]
+    h = f["validation"]["holdout"]
     assert h["meta_after"]["mean"] > h["meta_before"]["mean"]
     # Television's next pound beats Meta's in essentially every draw.
-    assert f["ch38"]["p_tv_marginal_above_meta"] > 0.99
+    assert f["optimisation"]["p_tv_marginal_above_meta"] > 0.99
     # The plans beat the current mix with near certainty.
-    assert f["ch27"]["p_gain"] > 0.95
-    # Value of information: Meta first, YouTube second, television last.
-    assert f["ch39"]["voi_ranking"][:2] == ["meta", "youtube"]
-    assert f["ch39"]["voi_ranking"][-1] == "tv"
+    assert f["teaching_optimisation"]["p_gain"] > 0.95
+    # Value of information: Meta clearly first and television clearly last.
+    # YouTube, Search and OOH sit within about £25,000 of each other in the
+    # reference run, so a refit on another machine may reorder them; the book
+    # says so (Chapter 34) and only the ends of the ranking are pinned here.
+    ranking = f["recommendation"]["voi_ranking"]
+    assert ranking[0] == "meta"
+    assert ranking[-1] == "tv"
+    assert set(ranking[1:4]) == {"youtube", "search", "ooh"}
