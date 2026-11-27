@@ -5,7 +5,10 @@ import arviz as az
 import pymc as pm
 
 from mmm_book import RANDOM_SEED
-from mmm_book.reference import national_aggregate, reference_model
+from mmm_book.reference import (
+    national_aggregate,
+    reference_model,
+)
 from mmm_book.sedge import CHANNELS, generate_sedge
 
 # [book:fit_imports-end]

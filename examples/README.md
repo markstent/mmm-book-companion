@@ -23,6 +23,13 @@ That is enough to show the modelling pattern the chapter describes, though not t
 - `ex_calibration.py` - add an experiment likelihood term for the Meta channel (a simple stand-in for the book's Chapter 32 geo holdout) and refit.
 - `ex_response_curve.py` - build a response curve for one channel from a point beta and read off average and marginal return.
 - `ex_budget_optimisation.py` - greedy numpy-only budget reallocation across channels (no scipy).
+- `ex_power.py` - Chapter 2: simulate a four-week, 20,000-a-week campaign against 20,000 of weekly noise and count how often it is detected (about half the time).
+- `ex_confounding.py` - Chapter 5: Table 5.2's visitors example, and a promotion riding on television with and without the promotion as a control.
+- `ex_data_audit.py` - Chapter 11: run the audits on `generate_sedge(faults=True)` and print each planted fault found.
+- `ex_scenarios.py` - Chapter 25: four costings of the 15 per cent budget cut on the teaching curves.
+- `ex_drift.py` - Chapter 29: the run-of-four rule on a predictive interval, with a fast stand-in for the model's predictive draws.
+- `ex_broken_extract.py` - Chapter 30: drop 30 per cent of Search spend from the extract and watch ROAS rise by 43 per cent.
+- `ex_readout.py` - Chapter 34: write Sedge's one-page readout as Markdown from `results/part9.json`.
 
 ## Running
 

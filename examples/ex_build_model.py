@@ -1,7 +1,10 @@
 """Build the reference national-aggregate MMM, without sampling it."""
 
 # [book:build_model_imports-start]
-from mmm_book.reference import national_aggregate, reference_model
+from mmm_book.reference import (
+    national_aggregate,
+    reference_model,
+)
 from mmm_book.sedge import generate_sedge
 
 # [book:build_model_imports-end]

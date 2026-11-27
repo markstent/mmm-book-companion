@@ -9,7 +9,7 @@ Companion code and notebooks for the book *Marketing Mix Modelling* by Mark Sten
 [![PyMC 6.2](https://img.shields.io/badge/PyMC-6.2-1f6fb2.svg)](https://www.pymc.io/)
 [![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://github.com/astral-sh/uv)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
-[![Notebooks tested](https://img.shields.io/badge/notebooks-28%20tested%20in%20CI-orange.svg?logo=jupyter&logoColor=white)](#running-the-tests)
+[![Notebooks tested](https://img.shields.io/badge/notebooks-34%20tested%20in%20CI-orange.svg?logo=jupyter&logoColor=white)](#running-the-tests)
 [![Citation](https://img.shields.io/badge/cite-CITATION.cff-blueviolet.svg)](CITATION.cff)
 
 ## What this is
@@ -57,12 +57,12 @@ companion/
 │   ├── metrics.py           # ROAS and contribution-share helpers
 │   └── plotting.py          # Shared plotting style
 ├── notebooks/
-│   ├── labs/                 # 11 method labs, one per modelling chapter
+│   ├── labs/                 # 17 labs, one per chapter that has a hands-on exercise
 │   ├── case_study/            # 6 case-study notebooks
 │   └── bridge_pymc_marketing.ipynb   # Raw PyMC -> PyMC-Marketing bridge
 ├── exercises/                # 5 reader exercises
 │   └── solutions/             # Matching worked solutions
-├── examples/                 # 11 short runnable scripts, one per code-heavy topic
+├── examples/                 # 18 short runnable scripts, one per code-heavy topic or lab
 ├── results/part9.json        # The Part IX numbers, written by case_results (the book's figures read it)
 ├── tests/                    # Unit tests, including tests that pin the book's printed numbers
 ├── Makefile                  # sync, unit, notebooks, test, lint
@@ -75,6 +75,9 @@ companion/
 
 | Chapter | Title | Notebook |
 | --- | --- | --- |
+| 2 | Why Marketing Measurement Is Difficult | [notebooks/labs/02_power_and_noise.ipynb](notebooks/labs/02_power_and_noise.ipynb) |
+| 5 | Confounders, Mediators and Colliders | [notebooks/labs/05_confounding.ipynb](notebooks/labs/05_confounding.ipynb) |
+| 11 | Cleaning and Auditing MMM Data | [notebooks/labs/11_auditing_the_data.ipynb](notebooks/labs/11_auditing_the_data.ipynb) |
 | 13 | Carryover, Lag and Adstock | [notebooks/labs/13_adstock_and_carryover.ipynb](notebooks/labs/13_adstock_and_carryover.ipynb) |
 | 14 | Saturation and Diminishing Returns | [notebooks/labs/14_saturation.ipynb](notebooks/labs/14_saturation.ipynb) |
 | 15 | Putting the Model Together | [notebooks/labs/15_building_the_model.ipynb](notebooks/labs/15_building_the_model.ipynb) |
@@ -86,6 +89,9 @@ companion/
 | 22 | Experiments and Calibration | [notebooks/labs/22_experiments_and_calibration.ipynb](notebooks/labs/22_experiments_and_calibration.ipynb) |
 | 23 | Contribution, ROAS and Response Curves | [notebooks/labs/23_response_curves.ipynb](notebooks/labs/23_response_curves.ipynb) |
 | 24 | Budget Optimisation | [notebooks/labs/24_budget_optimisation.ipynb](notebooks/labs/24_budget_optimisation.ipynb) |
+| 25 | Forecasting and Scenario Planning | [notebooks/labs/25_scenarios.ipynb](notebooks/labs/25_scenarios.ipynb) |
+| 29 | Refreshing and Monitoring the Model | [notebooks/labs/29_drift.ipynb](notebooks/labs/29_drift.ipynb) |
+| 30 | Failure Modes and Troubleshooting | [notebooks/labs/30_broken_extract.ipynb](notebooks/labs/30_broken_extract.ipynb) |
 
 ### Case study
 
@@ -104,7 +110,7 @@ The `exercises/` directory holds 5 standalone exercises for readers who want ext
 
 ### Example scripts
 
-`examples/` holds 11 short scripts, one per code-heavy topic (adstock, saturation, building, priors, fitting, hierarchy, posterior predictive checks, synthetic recovery, calibration, response curves and budget optimisation).
+`examples/` holds 18 short scripts. Eleven are one per code-heavy topic (adstock, saturation, building, priors, fitting, hierarchy, posterior predictive checks, synthetic recovery, calibration, response curves and budget optimisation), and seven back the labs of Chapters 2, 5, 11, 25, 29, 30 and 34 (power, confounding, data audit, scenarios, drift, broken extract and the one-page readout).
 Each runs on its own in seconds, for example `uv run python examples/ex_adstock.py`, and prints a short result.
 The PyMC ones use a small, fast sampler configuration on a two-region, one-year slice of Sedge, so they show the pattern rather than publication-quality posteriors.
 [examples/README.md](examples/README.md) describes each script, and `tests/test_examples.py` runs every one of them in CI.
@@ -189,7 +195,7 @@ Where it differs from the book's model, the difference is deliberate, and each o
   The observed result is 138,000 pounds of lift, a ROAS of 1.79 plus or minus 0.58.
   The generated panel records business-as-usual Meta spend in the test weeks, so the experiment is information the panel does not contain.
   It enters the case-study model once, as a likelihood term on the lift the model's own curve implies for the same regions and weeks.
-  `examples/ex_calibration.py` uses a simpler stand-in on the national model (ROAS times withheld spend).
+  `examples/ex_calibration.py` scores the national model's predicted lift for the test's own regions, weeks and pause against the measured lift.
 - **An experiment enters once.** Sedge's two television tests set the television prior and are not added again as likelihood terms; the Meta holdout is kept out of every prior.
 - **Lab 22 and Exercise 4** calibrate Search to a simulated experiment, a generic teaching example that does not use the Sedge experiment.
   The experiment's standard error is widened for transport to Chapter 22's $\sigma_{\text{eff}}$ before it enters the likelihood.

@@ -3,7 +3,11 @@
 # [book:response_curve_imports-start]
 import numpy as np
 
-from mmm_book.optimise import ResponseCurves, ledger_betas, to_money
+from mmm_book.optimise import (
+    ResponseCurves,
+    ledger_betas,
+    to_money,
+)
 from mmm_book.reference import national_aggregate
 from mmm_book.sedge import generate_sedge
 
@@ -20,9 +24,13 @@ curves = ResponseCurves(nat, ledger_betas(nat))
 
 now = curves.current_native[CHANNEL]
 for level in np.linspace(0, now * 2, 5):
-    spend, revenue = to_money(CHANNEL, level), curves.contribution(CHANNEL, level)
-    print(f"weekly spend={spend:9,.0f}  contribution={revenue:10,.0f}")
+    spend = to_money(CHANNEL, level)
+    revenue = curves.contribution(CHANNEL, level)
+    print(f"weekly spend={spend:9,.0f}", end="  ")
+    print(f"contribution={revenue:10,.0f}")
 
-print(f"average return at current spend:  {curves.average_return(CHANNEL):.2f}")
-print(f"marginal return at current spend: {curves.marginal_return(CHANNEL):.2f}")
+average = curves.average_return(CHANNEL)
+marginal = curves.marginal_return(CHANNEL)
+print(f"average return at current spend:  {average:.2f}")
+print(f"marginal return at current spend: {marginal:.2f}")
 # [book:response_curve-end]

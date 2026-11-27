@@ -44,9 +44,7 @@ def test_book_plan_direction_and_gain(curves):
     assert sum(plan.values()) == pytest.approx(curves.total_budget)
     assert plan["meta"] < curves.current_money["meta"]
     assert plan["tv"] > curves.current_money["tv"]
-    gain = (
-        curves.total_contribution(plan) - curves.total_contribution(curves.current_money)
-    ) * 52
+    gain = (curves.total_contribution(plan) - curves.total_contribution(curves.current_money)) * 52
     # about 0.29m a year on the teaching curves (0.27m on the fitted model, Chapter 33)
     assert 200_000 < gain < 400_000
 

@@ -52,3 +52,25 @@ Each `examples/ex_*.py` now has one pair of marker comments, `# [book:NAME-start
 `src/mmm_book/case_model.py` has `case-model` markers around the media, likelihood and noise block of the case-study model.
 `src/mmm_book/reference.py` has `reference-model` markers around the model block of the national reference model.
 Markers are comments and change no behaviour.
+
+## New labs
+
+Six new notebooks, each with a short script in `examples/` that runs in seconds and needs no sampling.
+They are linked from the book's `\trythis` boxes.
+
+| Chapter | Notebook | Script |
+| --- | --- | --- |
+| 2 | `notebooks/labs/02_power_and_noise.ipynb` | `examples/ex_power.py` |
+| 5 | `notebooks/labs/05_confounding.ipynb` | `examples/ex_confounding.py` |
+| 11 | `notebooks/labs/11_auditing_the_data.ipynb` | `examples/ex_data_audit.py` |
+| 25 | `notebooks/labs/25_scenarios.ipynb` | `examples/ex_scenarios.py` |
+| 29 | `notebooks/labs/29_drift.ipynb` | `examples/ex_drift.py` |
+| 30 | `notebooks/labs/30_broken_extract.ipynb` | `examples/ex_broken_extract.py` |
+
+Chapter 34 has a script only, `examples/ex_readout.py`, which writes the one-page readout from `results/part9.json`.
+`generate_sedge(..., faults=True)` plants the faults of Chapter 11's audits (see `PLANTED_FAULTS`); the default output is unchanged and a test pins it.
+
+## Listings fit the page
+
+Every line inside a printed listing range is now at most 64 characters wide, so the book's code never wraps mid-statement.
+Behaviour is unchanged.

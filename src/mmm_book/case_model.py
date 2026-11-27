@@ -116,7 +116,9 @@ class CasePriors:
 FIRST_PRIORS = CasePriors(
     roas={
         "tv": (2.2, 0.35),  # two geo tests at 2.0x and 2.4x; widened
-        "search": (2.5, 0.5),  # strong returns allowed, platform values excluded
+        # Judgement only: strong returns allowed, platform-scale values unlikely.
+        # Not derived from the Search pause test, which enters only as data.
+        "search": (2.5, 0.5),
         "meta": (1.8, 0.45),  # prospecting test read ~2.3x; set below it, kept broad
         "youtube": (1.5, 0.8),  # no experiment: weak, positive
         "ooh": (1.2, 1.5),  # no causal evidence: broad, positive
@@ -372,7 +374,8 @@ def build_case_model(
             z = pm.Normal(f"region_z_{ch}", 0.0, 1.0, dims="region")
             mult = pt.exp(tau * z)
             ref = data.reference_activity(ch)
-            sat = _adstock_hill(_lag_stack(data.drivers[ch]), alpha, k, ref)
+            lagged = _lag_stack(data.drivers[ch])
+            sat = _adstock_hill(lagged, alpha, k, ref)
             weighted = mult[:, None] * sat[:, :n]
             spend_fit = data.spend[ch][:, :n].sum() / Y_SCALE
             beta = roas * spend_fit * mult / (weighted.sum() + 1e-12)
@@ -380,9 +383,12 @@ def build_case_model(
             contribution.append(beta[:, None] * sat)
             if calibrate and ch == "meta":
                 _add_holdout(data, sat, beta, alpha, k, ref)
-        contribution = pt.stack(contribution)  # (channel, region, week)
+        # shape: (channel, region, week)
+        contribution = pt.stack(contribution)
         pm.Deterministic(
-            "channel_contribution", contribution.sum(axis=1) * Y_SCALE, dims=("channel", "week")
+            "channel_contribution",
+            contribution.sum(axis=1) * Y_SCALE,
+            dims=("channel", "week"),
         )
         pm.Deterministic(
             "roas",
@@ -396,7 +402,12 @@ def build_case_model(
         sigma = pm.HalfNormal("sigma", 0.1)
         # Noise scales with each region's size (its average sales).
         size = np.exp(log_y_region)[:, None]
-        pm.Normal("y", mu=mu[:, :n], sigma=sigma * size, observed=data.y[:, :n])
+        pm.Normal(
+            "y",
+            mu=mu[:, :n],
+            sigma=sigma * size,
+            observed=data.y[:, :n],
+        )
         # [book:case_model-end]
     return model
 

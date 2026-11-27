@@ -5,6 +5,7 @@ from mmm_book.sedge import (
     CHANNELS,
     GROUND_TRUTH,
     HILL_SLOPE,
+    PLANTED_FAULTS,
     TV_COST_PER_GRP,
     generate_sedge,
     ground_truth_contributions,
@@ -128,8 +129,46 @@ def test_search_pause_is_in_the_data():
     from mmm_book.sedge import SEARCH_PAUSE
 
     df = generate_sedge()
-    paused = df["region"].isin([f"region_{r}" for r in SEARCH_PAUSE["regions"]]) & df[
-        "week"
-    ].isin(list(SEARCH_PAUSE["weeks"]))
+    paused = df["region"].isin([f"region_{r}" for r in SEARCH_PAUSE["regions"]]) & df["week"].isin(
+        list(SEARCH_PAUSE["weeks"])
+    )
     assert (df.loc[paused, "search_generic_impr"] == 0).all()
     assert (df.loc[paused, "search_brand_spend"] > 0).all()
+
+
+def test_default_frame_is_unchanged_by_the_faults_option():
+    """Chapter 11's faults are opt-in: the default Sedge frame must stay what the book prints."""
+    import hashlib
+
+    df = generate_sedge()
+    assert df.equals(generate_sedge(faults=False))
+    numbers = np.round(df.select_dtypes("number").to_numpy(dtype=float), 4)
+    digest = hashlib.sha256(numbers.tobytes()).hexdigest()
+    assert digest == "3377cb904c07c21a123557a71aad2ca8c770b42331a2575236b4d11be4210280"
+
+
+def test_each_planted_fault_is_present():
+    clean = generate_sedge()
+    bad = generate_sedge(faults=True)
+    assert list(bad.columns) == list(clean.columns)
+    cost = PLANTED_FAULTS["search_cost"]
+    late = clean["week"] >= cost["week"]
+    np.testing.assert_allclose(
+        bad.loc[late, "search_spend"], clean.loc[late, "search_spend"] * (1 + cost["step"])
+    )
+    assert bad.loc[~late, "search_spend"].equals(clean.loc[~late, "search_spend"])
+    assert (bad["search_generic_impr"] == clean["search_generic_impr"]).all()
+    ooh = bad["week"].isin(PLANTED_FAULTS["ooh_units"]["weeks"])
+    np.testing.assert_allclose(bad.loc[ooh, "ooh_impr"], clean.loc[ooh, "ooh_impr"] * 1000)
+    disc = bad["week"].isin(PLANTED_FAULTS["retailer_discount"]["weeks"]) & (
+        clean["promo_depth"] == 0
+    )
+    assert disc.any()
+    np.testing.assert_allclose(bad.loc[disc, "price"], clean.loc[disc, "price"] * 0.85)
+    zero = bad["week"] == PLANTED_FAULTS["meta_zero_fill"]["week"]
+    assert (bad.loc[zero, ["meta_spend", "meta_impr"]] == 0).all().all()
+    assert (clean.loc[zero, "meta_spend"] > 0).all()
+    assert (bad.groupby("week")["tv_grps"].std() < 1e-9).all()
+    assert clean.groupby("week")["tv_grps"].std().min() > 0
+    np.testing.assert_allclose(bad["tv_spend"], bad["tv_grps"] * TV_COST_PER_GRP)
+    assert bad["revenue"].equals(clean["revenue"])

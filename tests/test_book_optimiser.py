@@ -88,7 +88,7 @@ def test_chapter24_constrained_plan(curves):
 def test_chapter28_cut_and_recession(curves):
     current = revenue_m(curves, curves.current_money)
     cut = targeted_cut(curves, 5.1)
-    assert current - revenue_m(curves, cut) == pytest.approx(0.9, abs=0.05)
+    assert current - revenue_m(curves, cut) == pytest.approx(0.92, abs=0.01)
     pro_rata = {ch: curves.current_money[ch] * 5.1 / 6.0 for ch in CHANNELS}
     assert current - revenue_m(curves, pro_rata) == pytest.approx(1.4, abs=0.05)
     dearer_media = revenue_m(curves, cut) - revenue_m(curves, cut, cpm_rise=0.08)

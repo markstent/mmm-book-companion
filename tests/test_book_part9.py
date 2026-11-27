@@ -606,8 +606,13 @@ def test_numbers_added_in_the_release_pass(r):
     assert round(-sc["targeted_cut"]["difference_m"]["mean"] / 0.9, 1) == 1.3
     assert round(sc["targeted_cut"]["profit_change_m"], 2) == 0.31
     voi = r["recommendation"]["voi"]
-    printed = {"meta": (0.76, 1.49), "youtube": (1.20, 2.55), "search": (1.09, 1.68),
-               "ooh": (1.10, 1.68), "tv": (2.14, 2.30)}
+    printed = {
+        "meta": (0.76, 1.49),
+        "youtube": (1.20, 2.55),
+        "search": (1.09, 1.68),
+        "ooh": (1.10, 1.68),
+        "tv": (2.14, 2.30),
+    }
     for ch, (lo, hi) in printed.items():
         got = (round(voi[ch]["marginal_p10"], 2), round(voi[ch]["marginal_p90"], 2))
         assert got == (lo, hi), ch
@@ -674,7 +679,7 @@ def test_a_fresh_fit_reaches_the_books_conclusions(fresh):
     assert f["optimisation"]["p_tv_marginal_above_meta"] > 0.99
     # The plans beat the current mix with near certainty.
     assert f["teaching_optimisation"]["p_gain"] > 0.95
-    # Value of information: Meta clearly first and television clearly last.
+    # Budget at stake: Meta clearly first and television clearly last.
     # YouTube, Search and OOH sit within about £25,000 of each other in the
     # reference run, so a refit on another machine may reorder them; the book
     # says so (Chapter 34) and only the ends of the ranking are pinned here.

@@ -74,10 +74,18 @@ RESULTS_PATH = Path(__file__).resolve().parents[2] / "results" / "part9.json"
 # scored here on the fitted model so that Chapter 33 can compare like with like.
 TEACHING_PLANS = {
     "teaching_unconstrained": {
-        "search": 1.19, "meta": 0.68, "youtube": 1.13, "tv": 3.00, "ooh": 0.00,
+        "search": 1.19,
+        "meta": 0.68,
+        "youtube": 1.13,
+        "tv": 3.00,
+        "ooh": 0.00,
     },
     "teaching_constrained": {
-        "search": 1.22, "meta": 1.20, "youtube": 1.04, "tv": 1.82, "ooh": 0.72,
+        "search": 1.22,
+        "meta": 1.20,
+        "youtube": 1.04,
+        "tv": 1.82,
+        "ooh": 0.72,
     },
 }
 
@@ -442,7 +450,7 @@ def optimisation(fits: dict, curves) -> dict:
 
 
 def recommendation(fits: dict, curves, optimisation_results: dict) -> dict:
-    """Value of information: rerun the optimiser at each channel's p10 and p90 marginal return.
+    """Budget at stake: rerun the optimiser at each channel's p10 and p90 marginal return.
 
     For each channel, the draws are split by that channel's marginal return,
     and the optimiser is rerun on the mean curves of the bottom tenth and of

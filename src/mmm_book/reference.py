@@ -206,7 +206,9 @@ def reference_model(
     n_weeks = len(nat)
     n_fit = n_weeks if n_train is None else int(n_train)
     if not 0 < n_fit <= n_weeks:
-        raise ValueError("n_train must be between 1 and the number of weeks")
+        raise ValueError(
+            "n_train must be between 1 and the number of weeks",
+        )
 
     feat = build_features(nat)
     season = build_seasonality(nat)
@@ -223,25 +225,35 @@ def reference_model(
 
     # [book:reference_model-start]
     with pm.Model() as model:
-        intercept = pm.Normal("intercept", mu=y_fit.mean(), sigma=scale)
+        intercept = pm.Normal(
+            "intercept",
+            mu=y_fit.mean(),
+            sigma=scale,
+        )
         trend = pm.Normal("trend", 0, scale)
         season_a = pm.Normal("season_a", 0, scale)
         season_b = pm.Normal("season_b", 0, scale)
-        omega = {name: pm.Normal(f"omega_{name}", 0, scale) for name in events}
-        delta = {name: pm.Normal(f"delta_{name}", 0, scale) for name in treatments}
-        gamma = {name: pm.Normal(f"gamma_{name}", 0, scale) for name in controls}
+        omega, delta, gamma = {}, {}, {}
+        for name in events:
+            omega[name] = pm.Normal(f"omega_{name}", 0, scale)
+        for name in treatments:
+            delta[name] = pm.Normal(f"delta_{name}", 0, scale)
+        for name in controls:
+            gamma[name] = pm.Normal(f"gamma_{name}", 0, scale)
         mu = (
             intercept
             + trend * week_c
             + season_a * season["sin"]
             + season_b * season["cos"]
             + sum(omega[name] * events[name] for name in events)
-            + sum(delta[name] * treatments[name] for name in treatments)
+            + sum(delta[t] * treatments[t] for t in treatments)
             + sum(gamma[name] * controls[name] for name in controls)
         )
         if include_media:
             beta_sigma = BETA_PRIOR_SHARE * float(y_fit.mean())
-            betas = {ch: pm.HalfNormal(f"beta_{ch}", sigma=beta_sigma) for ch in CHANNELS}
+            betas = {}
+            for ch in CHANNELS:
+                betas[ch] = pm.HalfNormal(f"beta_{ch}", beta_sigma)
             mu = mu + sum(betas[ch] * feat[ch] for ch in CHANNELS)
         sigma = pm.HalfNormal("sigma", sigma=scale)
         if n_train is not None:

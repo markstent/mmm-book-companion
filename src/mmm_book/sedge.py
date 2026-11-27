@@ -281,9 +281,11 @@ def _build(n_weeks: int, n_regions: int, seed: int) -> tuple[np.random.Generator
         + rng.normal(0, 1.0, (R, 1))
         + rng.normal(0, 2.0, (R, T))
     )
-    rainfall = rng.gamma(4.0, 1.0, (R, T)) * (
-        3.8 + 1.2 * np.cos(2 * np.pi * woy / 52)[None, :]
-    ) * rng.uniform(0.8, 1.25, (R, 1))
+    rainfall = (
+        rng.gamma(4.0, 1.0, (R, T))
+        * (3.8 + 1.2 * np.cos(2 * np.pi * woy / 52)[None, :])
+        * rng.uniform(0.8, 1.25, (R, 1))
+    )
 
     # The new retail partner: true distribution steps up at the onboarding
     # week; the recorded series catches up ``lag_weeks`` later.
@@ -307,15 +309,21 @@ def _build(n_weeks: int, n_regions: int, seed: int) -> tuple[np.random.Generator
     steady = [w for w in _STEADY_SOCIAL_WEEKS if w < T]
     if steady:
         social_plan[steady] = social_plan[: steady[0]].mean()
-    meta = size[:, None] * social_plan * np.exp(
-        _ar1(rng, (T,), 0.125)[None, :] + rng.normal(0, 0.11, (R, T))
+    meta = (
+        size[:, None]
+        * social_plan
+        * np.exp(_ar1(rng, (T,), 0.125)[None, :] + rng.normal(0, 0.11, (R, T)))
     )
-    youtube = size[:, None] * social_plan * np.exp(
-        _ar1(rng, (T,), 0.125)[None, :] + rng.normal(0, 0.11, (R, T))
+    youtube = (
+        size[:, None]
+        * social_plan
+        * np.exp(_ar1(rng, (T,), 0.125)[None, :] + rng.normal(0, 0.11, (R, T)))
     )
 
-    ooh = size[:, None] * rng.lognormal(0.0, 0.35, (R, T)) * np.where(
-        rng.uniform(size=(R, T)) < 0.10, 3.0, 1.0
+    ooh = (
+        size[:, None]
+        * rng.lognormal(0.0, 0.35, (R, T))
+        * np.where(rng.uniform(size=(R, T)) < 0.10, 3.0, 1.0)
     )
     if ret_idx < R and ret["week"] < T:
         ooh[ret_idx, ret["week"] : ret["week"] + _RETAILER_OOH_WEEKS] *= _RETAILER_OOH_MULT
@@ -339,8 +347,8 @@ def _build(n_weeks: int, n_regions: int, seed: int) -> tuple[np.random.Generator
     paused_regions = [r for r in pause["regions"] if r < R]
     generic[np.ix_(paused_regions, [w for w in pause["weeks"] if w < T])] = 0.0
     generic_spend = to_budget(generic, BOOK_ANNUAL_SPEND["search"] * (1 - _BRAND_SPEND_SHARE))
-    generic_impr = generic_spend * _IMPR_PER_SPEND["search"] * rng.lognormal(
-        0.0, _IMPR_NOISE_SIGMA, (R, T)
+    generic_impr = (
+        generic_spend * _IMPR_PER_SPEND["search"] * rng.lognormal(0.0, _IMPR_NOISE_SIGMA, (R, T))
     )
 
     drivers = {"tv": tv_grps, "search": generic_impr, "meta": meta, "youtube": youtube, "ooh": ooh}
@@ -351,11 +359,9 @@ def _build(n_weeks: int, n_regions: int, seed: int) -> tuple[np.random.Generator
         halves[ch] = np.array([o[1] for o in out])
 
     # ---- organic baseline
-    level = (_BASE_LEVEL + _TREND_PER_WEEK * week + _BASE_LEVEL * _SEASONAL_AMPLITUDE * seasonal)
+    level = _BASE_LEVEL + _TREND_PER_WEEK * week + _BASE_LEVEL * _SEASONAL_AMPLITUDE * seasonal
     demand = (
-        np.exp(shock)
-        * (1 + launch_uplift)[None, :]
-        * (1 + _PROMO_UPLIFT_PER_DEPTH * promo_depth)
+        np.exp(shock) * (1 + launch_uplift)[None, :] * (1 + _PROMO_UPLIFT_PER_DEPTH * promo_depth)
     )
     baseline = (
         level[None, :]
@@ -494,8 +500,53 @@ def correct_distribution(df: pd.DataFrame) -> pd.DataFrame:
     return out
 
 
+# Faults planted by ``generate_sedge(faults=True)`` for the Chapter 11 audit lab.
+# Weeks are the 0-based ``week`` column. The first three are the exception-log
+# entries of Chapter 11; the last two are further traps for the reader's audits.
+PLANTED_FAULTS = {
+    # Paid Search is recorded on a dearer cost definition from this week,
+    # with impressions (reach) unchanged: a step of about 8 per cent.
+    "search_cost": {"week": 60, "step": 0.08},
+    # The OOH vendor file reports raw counts instead of thousands for eight weeks.
+    "ooh_units": {"weeks": range(100, 108), "factor": 1000.0},
+    # Retailer-funded discounts missing from the promotion calendar: the price
+    # falls 15 per cent in these weeks while promo_depth stays at zero.
+    "retailer_discount": {"weeks": range(40, 44), "price_factor": 0.85},
+    # One Meta week loaded as zero in every region (a failed load, not a pause).
+    "meta_zero_fill": {"week": 75},
+    # Television copied from the national figure: every region gets the
+    # week's average GRPs, so the regions no longer differ.
+    "tv_national_copy": True,
+}
+
+
+def _plant_faults(df: pd.DataFrame) -> pd.DataFrame:
+    """Return a copy of ``df`` with the ``PLANTED_FAULTS`` applied."""
+    out = df.copy()
+    cost = PLANTED_FAULTS["search_cost"]
+    late = out["week"] >= cost["week"]
+    out.loc[late, ["search_spend", "search_brand_spend"]] *= 1 + cost["step"]
+
+    ooh = PLANTED_FAULTS["ooh_units"]
+    out.loc[out["week"].isin(ooh["weeks"]), "ooh_impr"] *= ooh["factor"]
+
+    disc = PLANTED_FAULTS["retailer_discount"]
+    rows = out["week"].isin(disc["weeks"]) & (out["promo_depth"] == 0)
+    out.loc[rows, "price"] *= disc["price_factor"]
+
+    zero = out["week"] == PLANTED_FAULTS["meta_zero_fill"]["week"]
+    out.loc[zero, ["meta_spend", "meta_impr"]] = 0.0
+
+    out["tv_grps"] = out.groupby("week")["tv_grps"].transform("mean")
+    out["tv_spend"] = out["tv_grps"] * TV_COST_PER_GRP
+    return out
+
+
 def generate_sedge(
-    n_weeks: int = 156, n_regions: int = BOOK_N_REGIONS, seed: int = RANDOM_SEED
+    n_weeks: int = 156,
+    n_regions: int = BOOK_N_REGIONS,
+    seed: int = RANDOM_SEED,
+    faults: bool = False,
 ) -> pd.DataFrame:
     """Generate the synthetic Sedge weekly panel, as recorded.
 
@@ -507,6 +558,9 @@ def generate_sedge(
     rainfall, the launch indicator, the category search index, branded
     search volume and net revenue. The ``distribution`` column is the
     recorded series, late update included (see ``correct_distribution``).
+
+    ``faults=True`` plants the data faults in ``PLANTED_FAULTS`` for the
+    Chapter 11 audit lab; the default output is unchanged.
     """
     rng, regions, scale = _build(n_weeks, n_regions, seed)
 
@@ -533,5 +587,5 @@ def generate_sedge(
         data["revenue"] = region["baseline"] + contributions + noise
         frames.append(pd.DataFrame(data))
 
-    df = pd.concat(frames, ignore_index=True)
-    return df[_COLUMN_ORDER]
+    df = pd.concat(frames, ignore_index=True)[_COLUMN_ORDER]
+    return _plant_faults(df) if faults else df

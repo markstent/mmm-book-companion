@@ -61,10 +61,10 @@ where ``implied_lift`` is the revenue the fitted Meta curve says the pause
 cost: Meta switched off in the treatment regions for the six test weeks,
 pushed through the model's own adstock and saturation, and summed over the
 test weeks plus the cooldown.
-The national lab version (Lab 22, ``examples/ex_calibration.py``) uses a
-simpler stand-in, ``implied_meta_roas`` times
-``EXPERIMENT_WITHHELD_SPEND_GBP``; it is an approximation because the ledger
-curve's holdout return (1.55) sits a little below the annual average (1.75).
+The national lab version (Lab 22, ``examples/ex_calibration.py``) scores the
+same way on the national aggregate: the model's predicted lift for the
+test's own regions, weeks and pause, through the model's adstock and
+saturation, summed over the test weeks plus the cooldown.
 """
 
 from __future__ import annotations
